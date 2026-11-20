@@ -1,0 +1,298 @@
+{
+ "patch": 40025,
+ "parcel": 7275742,
+ "scenario": "honesto",
+ "true_crop_id": 2,
+ "declared_area_ha": null,
+ "agent01_output": {
+  "patch": 40025,
+  "parcel_id": 7275742,
+  "region": "t32ulu",
+  "area_ha": 2.35,
+  "declared_crop": "trigo de inverno",
+  "p_declared_crop": 0.735,
+  "observed_crop": "trigo de inverno",
+  "top3": [
+   {
+    "crop": "trigo de inverno",
+    "prob": 0.735
+   },
+   {
+    "crop": "trigo duro",
+    "prob": 0.047
+   },
+   {
+    "crop": "beterraba",
+    "prob": 0.032
+   }
+  ],
+  "ndvi_curve": {
+   "dates": [
+    "2018-09-17",
+    "2018-10-03",
+    "2018-10-19",
+    "2018-11-04",
+    "2018-11-20",
+    "2018-12-06",
+    "2018-12-22",
+    "2019-01-07",
+    "2019-01-23",
+    "2019-02-08",
+    "2019-02-24",
+    "2019-03-12",
+    "2019-03-28",
+    "2019-04-13",
+    "2019-04-29",
+    "2019-05-15",
+    "2019-05-31",
+    "2019-06-16",
+    "2019-07-02",
+    "2019-07-18",
+    "2019-08-03",
+    "2019-08-19",
+    "2019-09-04",
+    "2019-09-20",
+    "2019-10-06",
+    "2019-10-22"
+   ],
+   "values": [
+    0.341,
+    0.285,
+    0.26,
+    0.232,
+    0.167,
+    0.225,
+    0.278,
+    0.328,
+    0.374,
+    0.415,
+    0.415,
+    0.516,
+    0.692,
+    0.774,
+    0.779,
+    0.597,
+    0.816,
+    0.82,
+    0.781,
+    0.398,
+    0.303,
+    0.317,
+    0.343,
+    0.583,
+    0.821,
+    0.821
+   ]
+  },
+  "phenology": {
+   "peak_ndvi": 0.821,
+   "peak_date": "2019-10-06",
+   "peak_step": 24,
+   "greenup_date": "2019-09-04",
+   "senescence_date": "2019-10-22",
+   "green_season_days": 48,
+   "ndvi_integral": 1.37
+  },
+  "early_confirmation": {
+   "target_precision": 0.95,
+   "timeline": [
+    {
+     "date": "2019-02-08",
+     "p": 0.603,
+     "threshold": 0.71
+    },
+    {
+     "date": "2019-03-12",
+     "p": 0.784,
+     "threshold": 0.608
+    },
+    {
+     "date": "2019-04-13",
+     "p": 0.812,
+     "threshold": 0.49
+    },
+    {
+     "date": "2019-05-15",
+     "p": 0.812,
+     "threshold": 0.516
+    },
+    {
+     "date": "2019-06-16",
+     "p": 0.911,
+     "threshold": 0.606
+    },
+    {
+     "date": "2019-07-18",
+     "p": 0.728,
+     "threshold": 0.342
+    },
+    {
+     "date": "2019-08-19",
+     "p": 0.686,
+     "threshold": 0.392
+    },
+    {
+     "date": "2019-09-20",
+     "p": 0.676,
+     "threshold": 0.371
+    },
+    {
+     "date": "2019-10-22",
+     "p": 0.679,
+     "threshold": 0.376
+    }
+   ],
+   "confirmed_since": "2019-03-12"
+  },
+  "model": "U-TAE-lite"
+ },
+ "agent02_output": {
+  "patch": 40025,
+  "parcel_id": 7275742,
+  "area_audit": {
+   "declared_area_ha": 2.38,
+   "registry_area_ha": 2.38,
+   "declared_minus_registry_pct": 0.0,
+   "interior_boundary_pct": 0.05,
+   "non_field_pct": 0.1,
+   "outer_ring_score": 0.36,
+   "core_score": 0.0,
+   "score_A": 0.15,
+   "score_B": 0.36,
+   "score_C": 0.36,
+   "inconsistency_score": 0.36,
+   "threshold_inconsistency": 29.28,
+   "declared_area_supported": true,
+   "parcel_cut_by_image_edge": false
+  },
+  "low_vigor": {
+   "low_vigor_pct": 8.03,
+   "n_spots": 4,
+   "largest_spot_ha": 0.074
+  },
+  "image": {
+   "sensor": "SPOT 6-7",
+   "gsd_m": 2.0
+  },
+  "evidence_png": "artifacts/agent02/evidence/40025_7275742.png"
+ },
+ "agent03_output": {
+  "patch": 40025,
+  "parcel_id": 7275742,
+  "region": "t32ulu",
+  "region_benchmark_used": "t32ulu",
+  "declaration_check": {
+   "declared_crop": "trigo de inverno",
+   "p_declared": 0.735,
+   "threshold_tau": 0.07,
+   "consistent": true,
+   "temporal_model_alternative": "trigo de inverno",
+   "confirmed_since": "2019-03-12"
+  },
+  "area_audit": {
+   "declared_area_ha": 2.38,
+   "registry_area_ha": 2.38,
+   "declared_minus_registry_pct": 0.0,
+   "interior_boundary_pct": 0.05,
+   "non_field_pct": 0.1,
+   "outer_ring_score": 0.36,
+   "core_score": 0.0,
+   "score_A": 0.15,
+   "score_B": 0.36,
+   "score_C": 0.36,
+   "inconsistency_score": 0.36,
+   "threshold_inconsistency": 29.28,
+   "declared_area_supported": true,
+   "parcel_cut_by_image_edge": false
+  },
+  "regional_comparison": {
+   "applicable": true,
+   "n_wheat_parcels_in_region_train": 216,
+   "ndvi_integral": 1.37,
+   "ndvi_integral_percentile": 2.3,
+   "peak_ndvi": 0.821,
+   "peak_ndvi_percentile": 40.3,
+   "peak_date": "2019-10-06",
+   "region_median_peak_date": "2019-05-15",
+   "peak_delay_days_vs_region": 144,
+   "low_vigor_pct": 8.03,
+   "low_vigor_percentile": 77.8
+  },
+  "risk_score": 0.44,
+  "risk_level": "medium",
+  "score_breakdown": {
+   "declaration": 0.183,
+   "area": 0.006,
+   "vigor": 0.9,
+   "timing": 1.0,
+   "heterogeneity": 0.5,
+   "weights": {
+    "declaration": 0.35,
+    "area": 0.2,
+    "vigor": 0.25,
+    "timing": 0.1,
+    "heterogeneity": 0.1
+   }
+  },
+  "data_quality_flags": [
+   "vigor_not_validated_against_yield"
+  ]
+ },
+ "trace": [
+  {
+   "agent": "agent01",
+   "seconds": 0.0
+  },
+  {
+   "agent": "agent02",
+   "seconds": 0.06
+  },
+  {
+   "agent": "agent03",
+   "seconds": 0.001
+  },
+  {
+   "agent": "agent04",
+   "seconds": 3.52
+  }
+ ],
+ "agent04_output": {
+  "diagnostico": "A declaração de TRIGO DE INVERNO foi confirmada pela série temporal Sentinel-2, com confirmação desde 2019-03-12. A área também é suportada pela imagem SPOT 6-7: área declarada 2.38 ha e área de cadastro 2.38 ha, sem indício de divergência relevante. No benchmark regional, o talhão apresenta NDVI integral muito abaixo da maioria dos trigos da região (percentil 2.3) e atraso forte no pico de vegetação em relação à mediana regional (144 dias), o que eleva o risco agronômico, embora o pico de NDVI seja moderado (0.821).",
+  "nivel_risco": "medio",
+  "parecer_risco": "Risco médio. Não há inconsistência de cultura ou área, mas o desempenho vegetativo está entre os mais baixos da região para trigo, com vigor acumulado muito abaixo do benchmark e ciclo muito mais tardio que a mediana regional. A parcela também tem 8.03% de manchas de baixo vigor, acima da maior parte dos trigos comparáveis (percentil 77.8 para baixa vigorosidade).",
+  "recomendacoes": [
+   {
+    "acao": "Realizar vistoria de campo para verificar se o atraso fenológico e o baixo vigor acumulado estão associados a problema de estabelecimento, falha de stand ou outra restrição agronômica.",
+    "prioridade": "media",
+    "evidencia_referenciada": "regional_fusion.regional_comparison"
+   },
+   {
+    "acao": "Solicitar documentação operacional da área para corroborar o ciclo observado e a data de confirmação da cultura declarada.",
+    "prioridade": "media",
+    "evidencia_referenciada": "regional_fusion.declaration_check.confirmed_since"
+   },
+   {
+    "acao": "Acompanhar o talhão nas próximas leituras de sensoriamento remoto para verificar se o vigor melhora ou se persiste a heterogeneidade interna observada.",
+    "prioridade": "baixa",
+    "evidencia_referenciada": "field_delineation.low_vigor.low_vigor_pct"
+   },
+   {
+    "acao": "Registrar o talhão como área tecnicamente validada em termos de cultura e extensão, sem necessidade de ajuste cadastral com base nas evidências atuais.",
+    "prioridade": "baixa",
+    "evidencia_referenciada": "regional_fusion.area_audit.declared_area_supported"
+   }
+  ],
+  "limitacoes": "Há uma flag de qualidade indicando que o vigor ainda não foi validado contra produtividade ('vigor_not_validated_against_yield').",
+  "_meta": {
+   "model": "gpt-5.4-mini",
+   "latency_s": 3.52,
+   "prompt_tokens": 3690,
+   "completion_tokens": 514
+  }
+ },
+ "validation": {
+  "ok": true,
+  "issues": []
+ },
+ "errors": []
+}

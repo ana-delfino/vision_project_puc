@@ -1,0 +1,55 @@
+{
+ "description": {
+  "A": "% de borda no interior + % não cultivada (polígono inteiro)",
+  "B": "(borda + não cultivada) na faixa externa − o mesmo no núcleo",
+  "C": "(borda + não cultivada) só na faixa externa"
+ },
+ "results": {
+  "A": {
+   "tau": 45.52,
+   "val_false_alarm": 0.051,
+   "val_det_15": 0.0635,
+   "val_auc_15": 0.8402,
+   "val_det_30": 0.0874,
+   "val_auc_30": 0.9068,
+   "test_false_alarm": 0.0354,
+   "test_det_15": 0.0408,
+   "test_auc_15": 0.8486,
+   "test_det_30": 0.0575,
+   "test_auc_30": 0.9251,
+   "n_val": 471,
+   "n_test": 424
+  },
+  "B": {
+   "tau": 29.28,
+   "val_false_alarm": 0.051,
+   "val_det_15": 0.6988,
+   "val_auc_15": 0.9306,
+   "val_det_30": 0.8618,
+   "val_auc_30": 0.9521,
+   "test_false_alarm": 0.059,
+   "test_det_15": 0.6689,
+   "test_auc_15": 0.9253,
+   "test_det_30": 0.865,
+   "test_auc_30": 0.9564,
+   "n_val": 471,
+   "n_test": 424
+  },
+  "C": {
+   "tau": 66.785,
+   "val_false_alarm": 0.051,
+   "val_det_15": 0.1619,
+   "val_auc_15": 0.9021,
+   "val_det_30": 0.5508,
+   "val_auc_30": 0.9454,
+   "test_false_alarm": 0.0259,
+   "test_det_15": 0.1383,
+   "test_auc_15": 0.9025,
+   "test_det_30": 0.4956,
+   "test_auc_30": 0.9539,
+   "n_val": 471,
+   "n_test": 424
+  }
+ },
+ "chosen_on_validation": "B"
+}

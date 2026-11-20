@@ -40,27 +40,26 @@ img.ev{width:100%;border-radius:12px;margin-top:8px}
 .footer{position:absolute;bottom:22px;color:#5b7393;font-size:.75rem}
 @media(max-width:800px){.grid,.grid2{grid-template-columns:1fr}.slide{padding:50px 0}}
 </style>
-</head>
 <body>
 <div class="deck">
 
 <section class="slide">
   <div class="kicker">Pós-graduação · Visão Computacional</div>
   <h1>AgriRisk-<span class="highlight">MA</span></h1>
-  <div class="subtitle">Trigo de inverno · série temporal Sentinel-2 + imagem SPOT de alta resolução, <b>da mesma parcela</b>, comparadas com a <b>própria região</b></div>
-  <p>Sistema multiagente que confere se o talhão declarado como trigo é trigo e como ele se compara aos trigos vizinhos. O resultado é um parecer rastreável para o analista de crédito ou seguro rural.</p>
-  <div class="meta"><span class="pill">PASTIS-HD</span><span class="pill">U-TAE-lite</span><span class="pill">U-Net · SPOT</span><span class="pill">Fusão aprendida</span><span class="pill">Benchmark regional</span><span class="pill">LLM com grounding</span></div>
-  <div class="footer">Dados: PASTIS-HD (IGN/CNES, etalab-2.0) · safra 2018-19 · França</div>
+  <div class="subtitle">Trigo de inverno · <b>o que</b> está plantado, <b>desde quando</b> dá para confirmar, <b>quanto</b> está plantado e <b>como</b> está em relação à própria região</div>
+  <p>Sistema multiagente que confere a declaração de um talhão (cultura e área) com a série temporal Sentinel-2, a imagem SPOT de alta resolução e o polígono declarado da mesma parcela. O resultado é um parecer rastreável para o analista de crédito ou seguro rural.</p>
+  <div class="meta"><span class="pill">PASTIS-HD</span><span class="pill">RPG 2019</span><span class="pill">U-TAE-lite</span><span class="pill">Delimitação de talhões</span><span class="pill">Benchmark regional</span><span class="pill">LLM com grounding</span></div>
+  <div class="footer">Dados: PASTIS-HD (IGN/CNES) e RPG 2019 (IGN/ASP), licença etalab · safra 2018-19 · França</div>
 </section>
 
 <section class="slide">
   <div class="kicker">01 · Contexto de negócio</div>
-  <h2>A pergunta do analista de crédito ou seguro rural</h2>
-  <p>No crédito rural, o regulador permite fiscalizar operações por sensoriamento remoto: a Resolução CMN 4.427/2015 exigiu o registro das coordenadas da área financiada no Sicor e autorizou esse tipo de fiscalização, e a Resolução CMN 5.267/2025 atualizou as regras. Na prática, quem analisa um talhão quer responder três perguntas:</p>
+  <h2>As perguntas do analista de crédito ou seguro rural</h2>
+  <p>O regulador permite fiscalizar o crédito rural por sensoriamento remoto: a Resolução CMN 4.427/2015 exigiu o registro das coordenadas da área financiada no Sicor, e a Resolução CMN 5.267/2025 atualizou as regras. Cultura e área declaradas definem o valor financiado ou segurado. Quem analisa o talhão quer saber:</p>
   <div class="grid">
-    <div class="card"><div class="num">1</div><h3>Está plantado o que foi declarado?</h3><p>Uma declaração divergente é risco de conformidade, e às vezes de fraude. Confirmar em campo é caro; o sistema prioriza onde vale ir.</p></div>
-    <div class="card"><div class="num">2</div><h3>A lavoura vai bem <i>comparada aos vizinhos</i>?</h3><p>Vigor e ciclo só fazem sentido relativos à região e à safra: clima, solo e calendário são parecidos para quem está perto.</p></div>
-    <div class="card"><div class="num">3</div><h3>Onde olhar dentro do talhão?</h3><p>Manchas de baixo vigor, localizadas na imagem de alta resolução, orientam a vistoria e o diálogo com o produtor.</p></div>
+    <div class="card"><div class="num">O quê?</div><h3>A cultura declarada está lá e desde quando?</h3><p>Declaração divergente é risco de conformidade ou de fraude. Confirmar cedo permite agir antes de liberar parcelas do crédito.</p></div>
+    <div class="card"><div class="num">Quanto?</div><h3>A área declarada é real?</h3><p>Área declarada a maior significa sobrefinanciamento. A imagem de alta resolução mostra bordas, estradas e áreas não cultivadas.</p></div>
+    <div class="card"><div class="num">Como?</div><h3>A lavoura vai bem comparada aos vizinhos?</h3><p>Vigor e ciclo só fazem sentido relativos à região e à safra, porque clima, solo e calendário são parecidos para quem está perto.</p></div>
   </div>
   <p class="small">Decisões apoiadas: <b>priorizar vistoria</b>, <b>pedir documentação</b>, <b>ajustar o monitoramento</b>. O sistema não substitui a decisão humana: cada afirmação do parecer aponta para a evidência que a sustenta.</p>
 </section>
@@ -70,44 +69,45 @@ img.ev{width:100%;border-radius:12px;margin-top:8px}
   <h2>Como medimos se o sistema é útil</h2>
   <div class="tablewrap"><table>
     <tr><th>Pergunta de negócio</th><th>Métrica técnica</th><th>Resultado (teste)</th></tr>
-    <tr><td>Quantas declarações falsas o sistema pega?</td><td>Recall da divergência (conferência da declaração)</td><td><b>{{DC_RECALL}}</b></td></tr>
-    <tr><td>Quantos alarmes falsos geramos em quem declarou certo?</td><td>Taxa de falso alarme em trigos reais</td><td><b>{{DC_FA}} a cada 100 parcelas</b></td></tr>
-    <tr><td>Se 5% das declarações forem falsas, quantos alertas são reais?</td><td>Precisão esperada a 5% de prevalência</td><td><b>{{DC_PREC5}}</b></td></tr>
-    <tr><td>O sistema identifica o trigo com segurança?</td><td>F1 / AUC por parcela (fusão)</td><td><b>F1 {{A1_PAR_F1}} · AUC {{A1_PAR_AUC}}</b> (Agent 01)</td></tr>
+    <tr><td>Quantas culturas declaradas falsamente o sistema pega?</td><td>Recall da divergência</td><td><b>{{DC_RECALL}}</b></td></tr>
+    <tr><td>Quantos trigos verdadeiros acusamos por engano?</td><td>Alarme falso em trigos reais (restrição ≤ 3% na validação)</td><td><b>{{DC_FA}} a cada 100</b></td></tr>
+    <tr><td>Quando já dá para confirmar o trigo?</td><td>% de trigos confirmados por data, com limiar de 95% de precisão (validação)</td><td><b>{{APR_SHARE}} até {{APR_DATE}}</b> (precisão {{APR_PREC}})</td></tr>
+    <tr><td>A área declarada inflada em 30% é detectada?</td><td>Detecção com 5% de alarme falso (validação)</td><td><b>{{AA_DET30}}</b> (alarme falso {{AA_FA}})</td></tr>
     <tr><td>O parecer é rastreável?</td><td>% de pareceres que passam na validação de grounding</td><td><b>100%</b> com {{LLM_MODEL}} ({{LLM_N}} parcelas)</td></tr>
-    <tr><td>Quanto tempo leva um parecer?</td><td>Latência ponta a ponta (CPU + LLM)</td><td><b>~6 s</b> por parcela</td></tr>
   </table></div>
-  <p class="small">Precisão a 5% de prevalência = TPR·0,05 / (TPR·0,05 + FPR·0,95), com TPR e FPR medidos no teste. A prevalência de 5% é uma <b>premissa de cenário</b>, não um dado de mercado.</p>
+  <p class="small">Fraudes simuladas: outra cultura declarada como trigo, e polígono declarado ampliado em +15% ou +30% de área. Se 5% das declarações de cultura forem falsas (premissa de cenário, não dado de mercado), {{DC_PREC5}} dos alertas seriam reais.</p>
 </section>
 
 <section class="slide">
   <div class="kicker">03 · Dados e protocolo</div>
-  <h2>PASTIS-HD: duas visões da mesma parcela</h2>
-  <div class="grid2">
-    <div class="card"><span class="tagline">Série temporal · Sentinel-2</span><p>10 bandas, 10 m, 38 a 61 datas por recorte (set/2018 a out/2019). <b>Pré-processamento:</b> máscara de nuvem (azul alto), composição mediana numa grade fixa de 26 passos de 16 dias e interpolação das lacunas.</p></div>
-    <div class="card"><span class="tagline">Alta resolução · SPOT 6-7</span><p>RGB, nativo 1,5 m, alinhado pixel a pixel ao Sentinel. Usado a 2 m (640 × 640 px): perde pouco detalhe real e reduz o volume em 4×.</p></div>
+  <h2>Três visões da mesma parcela</h2>
+  <div class="grid">
+    <div class="card"><span class="tagline">Sentinel-2 · série temporal</span><p>10 bandas, 10 m, 38 a 61 datas por recorte (set/2018 a out/2019). Máscara de nuvem, composição mediana em grade de 16 dias e interpolação das lacunas.</p></div>
+    <div class="card"><span class="tagline">SPOT 6-7 · alta resolução</span><p>RGB, nativo 1,5 m, alinhado ao Sentinel. Usado a 2 m (640 × 640 px).</p></div>
+    <div class="card"><span class="tagline">RPG 2019 · declaração</span><p>Polígono, cultura e área declarados à PAC (IGN/ASP). O <code>ID_PARCEL</code> é o mesmo id do PASTIS: liga declaração e imagens.</p></div>
   </div>
   <div class="tablewrap"><table>
     <tr><th>Escolha</th><th>Valor</th><th>Justificativa</th></tr>
-    <tr><td>Cultura</td><td>Trigo de inverno (8.206 parcelas no PASTIS)</td><td>Presente nas 4 regiões; no SPOT (primavera) aparece <b>com a lavoura formada</b>, enquanto o milho aparece como solo exposto</td></tr>
-    <tr><td>Volume</td><td>150 recortes (30 por fold) com ≥ 5% de trigo</td><td>~3 GB baixados → ~1 GB processado; o trigo convive com 17 outras culturas como negativos</td></tr>
-    <tr><td>Divisão</td><td>Folds oficiais 1-3 treino · 4 validação · 5 teste</td><td>Recortes separados espacialmente; todas as regiões em todos os folds</td></tr>
-    <tr><td>Avaliação</td><td>{{N_TEST_PARCELS}} parcelas de teste ({{N_TEST_WHEAT}} de trigo)</td><td>Métricas por pixel (visão) e por parcela (decisão de negócio)</td></tr>
+    <tr><td>Cultura</td><td>Trigo de inverno (8.206 parcelas no PASTIS)</td><td>Presente nas 4 regiões; no SPOT, de primavera, aparece com a lavoura formada</td></tr>
+    <tr><td>Volume</td><td>150 recortes (30 por fold) com ≥ 5% de trigo; 10.168 polígonos RPG</td><td>~3 GB baixados (não 21 GB); índices commitados reproduzem a seleção</td></tr>
+    <tr><td>Divisão</td><td>Folds oficiais 1-3 treino · 4 validação · 5 teste</td><td>Todas as regiões em todos os folds; todo limiar escolhido na validação</td></tr>
+    <tr><td>Alinhamento RPG × PASTIS</td><td>IoU mediana 0,85 (rasterização a 10 m)</td><td>Os polígonos declarados caem sobre as parcelas certas</td></tr>
+    <tr><td>Computação</td><td>Google Colab: GPU T4 (treino) e VM de CPU (avaliação)</td><td>Reprodutível por scripts (<code>run_on_colab.sh</code>)</td></tr>
   </table></div>
 </section>
 
 <section class="slide">
   <div class="kicker">04 · Arquitetura</div>
-  <h2>Dois agentes de percepção, um de fusão, um de parecer</h2>
+  <h2>Dois agentes de visão, um de contexto, um de parecer</h2>
   <div class="chart">
-    <svg viewBox="0 0 1000 280" role="img" aria-label="Sentinel-2 alimenta o Agent 01 e SPOT alimenta o Agent 02; ambos alimentam o Agent 03 com benchmark regional; o Agent 03 alimenta o Agent 04, que gera o parecer">
+    <svg viewBox="0 0 1000 280" role="img" aria-label="Sentinel-2 alimenta o Agent 01; SPOT e o polígono declarado alimentam o Agent 02; ambos alimentam o Agent 03 com benchmark regional, que alimenta o Agent 04">
       <defs><marker id="ar" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0,0 L10,5 L0,10 z" fill="#ec7000"/></marker></defs>
       <g font-family="Inter,system-ui,sans-serif">
         <rect x="10" y="35" width="170" height="80" rx="14" fill="#0b1830" stroke="#1c355e"/><text x="95" y="68" text-anchor="middle" fill="#f2f5f9" font-size="15" font-weight="700">Sentinel-2</text><text x="95" y="90" text-anchor="middle" fill="#8fa1be" font-size="12">26 datas × 10 bandas</text>
-        <rect x="10" y="165" width="170" height="80" rx="14" fill="#0b1830" stroke="#1c355e"/><text x="95" y="198" text-anchor="middle" fill="#f2f5f9" font-size="15" font-weight="700">SPOT 6-7</text><text x="95" y="220" text-anchor="middle" fill="#8fa1be" font-size="12">RGB · 2 m</text>
-        <rect x="230" y="25" width="210" height="100" rx="14" fill="#162a4a" stroke="#ec7000"/><text x="335" y="55" text-anchor="middle" fill="#ec7000" font-size="11" font-weight="800" letter-spacing="1.5">AGENT 01</text><text x="335" y="79" text-anchor="middle" fill="#f2f5f9" font-size="15" font-weight="700">U-TAE-lite</text><text x="335" y="101" text-anchor="middle" fill="#8fa1be" font-size="12">cultura + fenologia</text>
-        <rect x="230" y="155" width="210" height="100" rx="14" fill="#162a4a" stroke="#ec7000"/><text x="335" y="185" text-anchor="middle" fill="#ec7000" font-size="11" font-weight="800" letter-spacing="1.5">AGENT 02</text><text x="335" y="209" text-anchor="middle" fill="#f2f5f9" font-size="15" font-weight="700">U-Net + manchas</text><text x="335" y="231" text-anchor="middle" fill="#8fa1be" font-size="12">trigo visual + anomalias</text>
-        <rect x="500" y="90" width="210" height="100" rx="14" fill="#162a4a" stroke="#ffbb00"/><text x="605" y="120" text-anchor="middle" fill="#ffbb00" font-size="11" font-weight="800" letter-spacing="1.5">AGENT 03</text><text x="605" y="144" text-anchor="middle" fill="#f2f5f9" font-size="15" font-weight="700">Fusão + região</text><text x="605" y="166" text-anchor="middle" fill="#8fa1be" font-size="12">declaração · percentis</text>
+        <rect x="10" y="165" width="170" height="80" rx="14" fill="#0b1830" stroke="#1c355e"/><text x="95" y="198" text-anchor="middle" fill="#f2f5f9" font-size="15" font-weight="700">SPOT + RPG</text><text x="95" y="220" text-anchor="middle" fill="#8fa1be" font-size="12">imagem 2 m + polígono</text>
+        <rect x="230" y="25" width="210" height="100" rx="14" fill="#162a4a" stroke="#ec7000"/><text x="335" y="55" text-anchor="middle" fill="#ec7000" font-size="11" font-weight="800" letter-spacing="1.5">AGENT 01</text><text x="335" y="79" text-anchor="middle" fill="#f2f5f9" font-size="15" font-weight="700">U-TAE-lite</text><text x="335" y="101" text-anchor="middle" fill="#8fa1be" font-size="12">o que · desde quando</text>
+        <rect x="230" y="155" width="210" height="100" rx="14" fill="#162a4a" stroke="#ec7000"/><text x="335" y="185" text-anchor="middle" fill="#ec7000" font-size="11" font-weight="800" letter-spacing="1.5">AGENT 02</text><text x="335" y="209" text-anchor="middle" fill="#f2f5f9" font-size="15" font-weight="700">Delimitação</text><text x="335" y="231" text-anchor="middle" fill="#8fa1be" font-size="12">quanto · auditoria de área</text>
+        <rect x="500" y="90" width="210" height="100" rx="14" fill="#162a4a" stroke="#ffbb00"/><text x="605" y="120" text-anchor="middle" fill="#ffbb00" font-size="11" font-weight="800" letter-spacing="1.5">AGENT 03</text><text x="605" y="144" text-anchor="middle" fill="#f2f5f9" font-size="15" font-weight="700">Região + risco</text><text x="605" y="166" text-anchor="middle" fill="#8fa1be" font-size="12">declaração · percentis</text>
         <rect x="760" y="90" width="150" height="100" rx="14" fill="#162a4a" stroke="#ffbb00"/><text x="835" y="120" text-anchor="middle" fill="#ffbb00" font-size="11" font-weight="800" letter-spacing="1.5">AGENT 04</text><text x="835" y="144" text-anchor="middle" fill="#f2f5f9" font-size="15" font-weight="700">Parecer</text><text x="835" y="166" text-anchor="middle" fill="#8fa1be" font-size="12">LLM + validação</text>
         <rect x="500" y="215" width="210" height="50" rx="12" fill="#0b1830" stroke="#1c355e" stroke-dasharray="4 3"/><text x="605" y="245" text-anchor="middle" fill="#8fa1be" font-size="12">benchmark: trigos da região (treino)</text>
         <g stroke="#ec7000" stroke-width="2" fill="none" marker-end="url(#ar)"><path d="M180,75 H226"/><path d="M180,205 H226"/><path d="M440,75 C475,75 465,125 496,125"/><path d="M440,205 C475,205 465,155 496,155"/><path d="M710,140 H756"/><path d="M605,215 V194"/></g>
@@ -115,57 +115,80 @@ img.ev{width:100%;border-radius:12px;margin-top:8px}
     </svg>
   </div>
   <div class="grid">
-    <div class="card"><span class="tagline">Paralelismo</span><p>01 e 02 leem fontes independentes e rodam ao mesmo tempo (LangGraph).</p></div>
-    <div class="card"><span class="tagline">Mesma parcela</span><p>Os dois agentes recebem o mesmo id de parcela; o contorno vem do cadastro (RPG).</p></div>
-    <div class="card"><span class="tagline">Degradação graciosa</span><p>Se um agente falha, o parecer sai como "evidência insuficiente", sem derrubar o pipeline.</p></div>
+    <div class="card"><span class="tagline">Divisão de trabalho</span><p>Cultura e ciclo são problemas <b>temporais</b> (Agent 01). Área é um problema de <b>geometria</b>, em que a alta resolução brilha (Agent 02).</p></div>
+    <div class="card"><span class="tagline">Mesma parcela</span><p>Os dois agentes recebem o mesmo id de parcela; o polígono vem da declaração (RPG).</p></div>
+    <div class="card"><span class="tagline">Degradação graciosa</span><p>Se um agente falha, o parecer sai como "evidência insuficiente". Parcela não auditável é sinalizada, não acusada.</p></div>
   </div>
 </section>
 
 <section class="slide">
   <div class="kicker">05 · Agent 01 · visão espaço-temporal</div>
   <h2>U-TAE-lite: segmentar culturas a partir de 26 imagens</h2>
-  <p><b>Arquitetura:</b> encoder convolucional compartilhado por data → atenção temporal por pixel com codificação da data → os mesmos pesos de atenção agregam as conexões de cada escala → decoder U-Net. São {{A1_PARAMS}} M de parâmetros, treinados em {{A1_MIN}} min numa GPU T4 do Google Colab. A arquitetura simplifica o U-TAE (Sainte Fare Garnot & Landrieu, ICCV 2021), o estado da arte no PASTIS.</p>
+  <p><b>Arquitetura:</b> encoder convolucional compartilhado por data → atenção temporal por pixel com codificação da data → os mesmos pesos de atenção agregam as conexões de cada escala → decoder U-Net. São {{A1_PARAMS}} M de parâmetros, treinados em {{A1_MIN}} min numa GPU T4. A arquitetura simplifica o U-TAE (Sainte Fare Garnot & Landrieu, ICCV 2021), o estado da arte no PASTIS.</p>
   <div class="tablewrap"><table>
-    <tr><th>Trigo por parcela (teste)</th><th>F1</th><th>AUC</th><th>Precisão</th><th>Recall</th></tr>
+    <tr><th>Trigo por parcela, safra completa (teste)</th><th>F1</th><th>AUC</th><th>Precisão</th><th>Recall</th></tr>
     <tr><td><b>U-TAE-lite</b> (sequência de imagens)</td><td><b>{{A1_PAR_F1}}</b></td><td><b>{{A1_PAR_AUC}}</b></td><td><b>{{A1_PAR_P}}</b></td><td>{{A1_PAR_R}}</td></tr>
     <tr><td>Baseline: Random Forest na curva média da parcela</td><td>{{RF_PAR_F1}}</td><td>{{RF_PAR_AUC}}</td><td>{{RF_PAR_P}}</td><td>{{RF_PAR_R}}</td></tr>
   </table></div>
-  <p class="small">Por pixel: IoU do trigo <b>{{A1_PIX_IOU}}</b>, F1 {{A1_PIX_F1}}; mIoU nas 18 culturas {{A1_MIOU}}, baixo nas classes raras com só 90 recortes de treino. <b>Justificativa:</b> com AUC parecida, o modelo espaço-temporal ganha em precisão, ou seja, gera menos falsos "é trigo".</p>
+  <p class="small">{{N_TEST_PARCELS}} parcelas de teste ({{N_TEST_WHEAT}} de trigo). Por pixel: IoU do trigo <b>{{A1_PIX_IOU}}</b>, F1 {{A1_PIX_F1}}; mIoU nas 18 culturas {{A1_MIOU}} (baixo nas classes raras, com só 90 recortes de treino).</p>
   <div class="chart"><div class="small"><b>Onde o modelo "olha" no tempo</b> · atenção média nos pixels de trigo do teste</div>{{ATT_CHART}}</div>
-  <p class="small">A atenção se concentra de <b>abril a julho</b> (pico verde, maturação e colheita do trigo) e em <b>agosto</b>, depois da colheita, quando o trigo já foi cortado e as culturas de verão estão verdes. Nas datas de inverno, em que tudo se parece, a atenção é quase nula. Isso é interpretabilidade coerente com a agronomia.</p>
+  <p class="small">A atenção se concentra de abril a julho (pico verde, maturação e colheita) e em agosto, depois da colheita, quando as culturas de verão estão verdes. É interpretabilidade coerente com a agronomia.</p>
 </section>
 
 <section class="slide">
-  <div class="kicker">06 · Agent 02 · visão de alta resolução</div>
-  <h2>SPOT: confirmação visual e manchas de baixo vigor</h2>
-  <div class="grid2">
-    <div class="card"><span class="tagline">Supervisionado · U-Net + MobileNetV2</span>
-      <p>Segmenta trigo × resto a 2 m (treino de {{A2_MIN}} min na T4). <b>Pixel:</b> IoU {{A2_PIX_IOU}}, F1 {{A2_PIX_F1}}. <b>Parcela:</b> F1 {{A2_PAR_F1}}, AUC {{A2_PAR_AUC}}.</p>
-      <p class="small">Os rótulos são de 10 m; a faixa de borda entre parcelas é ignorada no treino e nas métricas porque, na grade de 2 m, ela é rótulo grosseiro.</p></div>
-    <div class="card"><span class="tagline">Não supervisionado · manchas</span>
-      <p>VARI = (G − R) / (G + R − B). Um pixel é mancha se VARI &lt; mediana − 2·MAD da própria parcela, depois de abertura morfológica e com área mínima de 100 m².</p>
-      <p class="small">O PASTIS não tem rótulo de anomalia, por isso o método é robusto e não supervisionado. Nas parcelas de trigo do teste, as manchas ocupam mediana de {{A2_SPOT_MED}}% e p90 de {{A2_SPOT_P90}}% da área.</p></div>
+  <div class="kicker">05b · Agent 01 · confirmação antecipada</div>
+  <h2>Quando já dá para confirmar o trigo?</h2>
+  <p>O mesmo modelo foi treinado com <b>cortes temporais aleatórios</b>: em metade dos lotes, as datas posteriores a um corte sorteado são mascaradas na atenção. O teste confirma que mudar imagens futuras não altera a saída. Para cada data, o limiar é escolhido na validação para <b>95% de precisão</b>.</p>
+  <div class="chart">{{EARLY_CHART}}
+    <div class="legend"><span><i style="background:#de6c00"></i>trigos já confirmados</span><span><i style="background:#4f8fe6"></i>precisão dos confirmados</span></div>
   </div>
-  <div class="grid2">
-    <div class="card"><span class="tagline">Trigo com vigor no percentil {{LOW_PCT}} da região</span><img class="ev" src="{{IMG_LOW}}" alt="Parcela de trigo de baixo vigor no SPOT: tons claros e amarelados, irregulares; contorno da parcela em amarelo"></div>
-    <div class="card"><span class="tagline">Trigo saudável (percentil {{OK_PCT}})</span><img class="ev" src="{{IMG_OK}}" alt="Parcela de trigo saudável no SPOT: verde-escuro uniforme; poucas manchas vermelhas junto à borda"></div>
-  </div>
-  <p class="small">À esquerda, a imagem confirma o que a série temporal indica: lavoura clara e irregular. À direita, as poucas "manchas" em vermelho ficam na borda, efeito do contorno a 10 m (limitação conhecida).</p>
-</section>
-
-<section class="slide">
-  <div class="kicker">07 · Agent 03 · fusão e região</div>
-  <h2>Fusão aprendida e conferência da declaração</h2>
   <div class="tablewrap"><table>
-    <tr><th>Detecção de trigo por parcela (teste)</th><th>AUC</th><th>F1</th><th>Precisão</th><th>Recall</th></tr>
-    {{FUSION_ROWS}}
+    <tr><th>Corte da série</th><th>Trigos confirmados</th><th>Precisão (teste)</th><th>F1</th><th>AUC</th></tr>
+    {{EARLY_ROWS}}
   </table></div>
-  <p class="small"><b>Leitura honesta:</b> a série temporal carrega quase todo o sinal (coeficiente {{COEF_T}} contra {{COEF_V}} da imagem). A fusão mantém a AUC e troca precisão por recall, o que serve à conferência de declaração, porque deixar escapar um trigo verdadeiro como "suspeito" custa uma vistoria. A imagem SPOT vale mais para <b>localizar</b> problemas dentro da parcela do que para identificar a cultura.</p>
+  <p class="small"><b>Leitura de negócio:</b> até {{APR_DATE}}, {{APR_SHARE}} dos trigos já estão confirmados (precisão {{APR_PREC}} no teste); em meados de maio, {{MAY_SHARE}} ({{MAY_PREC}}). O alvo de 95% vem da validação: no teste ele oscila entre 90% e 97%.</p>
+</section>
+
+<section class="slide">
+  <div class="kicker">06 · Agent 02 · delimitação de talhões</div>
+  <h2>Onde termina um talhão e começa outro</h2>
+  <p><b>Modelo multitarefa</b> no estilo ResUNet-a (Waldner & Diakogiannis, 2020): U-Net + MobileNetV2 com duas saídas por pixel, <b>extensão cultivada</b> e <b>borda entre talhões</b>. Os rótulos vêm dos polígonos declarados do RPG, rasterizados a 2 m. Treinado em {{A2_MIN}} min numa T4.</p>
   <div class="grid">
-    <div class="card"><div class="num">{{DC_RECALL}}</div><h3>das declarações falsas detectadas</h3><p>Outras culturas declaradas como trigo, no teste (limiar τ = {{DC_TAU}}, escolhido na validação).</p></div>
-    <div class="card"><div class="num">{{DC_FA}}</div><h3>alarmes falsos por 100 trigos reais</h3><p>Custo operacional: vistorias desnecessárias.</p></div>
-    <div class="card"><div class="num">{{DC_PREC5}}</div><h3>dos alertas seriam reais</h3><p>Se 5% das declarações forem falsas (premissa de cenário).</p></div>
+    <div class="card"><div class="num">{{A2_EXT}}</div><h3>IoU da extensão cultivada</h3><p>Separa lavoura de estradas, matas e construções.</p></div>
+    <div class="card"><div class="num">{{A2_BF1}}</div><h3>F1 das bordas (tolerância 4 m)</h3><p>Precisão {{A2_BP}} · recall {{A2_BR}}.</p></div>
+    <div class="card"><div class="num">{{A2_REC}}</div><h3>parcelas recuperadas individualmente</h3><p>IoU ≥ 0,5; mediana {{A2_PIOU}}.</p></div>
   </div>
+  <p class="small"><b>Por que a área não é medida por talhão:</b> parcelas vizinhas do mesmo produtor muitas vezes não têm borda visível e se fundem numa instância. Por isso a auditoria de área não compara "área da instância ÷ área declarada" (essa versão detectava só 4% das inflações). Ela usa evidência geométrica do próprio polígono (próximo slide).</p>
+</section>
+
+<section class="slide">
+  <div class="kicker">06b · Agent 02 · auditoria de área</div>
+  <h2>O polígono declarado engloba mais do que um talhão?</h2>
+  <p>Uma declaração inflada, geometricamente, invade vizinhos, estradas ou áreas não cultivadas. A pontuação compara a <b>faixa externa</b> do polígono (30% da área) com o <b>núcleo</b>. Três variantes foram comparadas, e a escolha foi feita <b>só na validação</b> (maior detecção de +30% com 5% de alarme falso):</p>
+  <div class="tablewrap"><table>
+    <tr><th>Variante</th><th>Pontuação</th><th>Detecção +30% (val)</th><th>AUC +30% (val)</th><th>Detecção +30% (teste)</th><th>Detecção +15% (teste)</th><th>Alarme falso (teste)</th></tr>
+    {{VAR_ROWS}}
+  </table></div>
+  <div class="grid2">
+    <div class="card"><span class="tagline">Área declarada +30% · detectada</span><img class="ev" src="{{IMG_INFL}}" alt="Talhão de trigo no SPOT: à direita, polígono declarado em amarelo maior que o talhão; bordas detectadas em ciano cortam a faixa externa do polígono"><p class="small">Amarelo: polígono declarado. Ciano: bordas detectadas, que cruzam a faixa externa do polígono.</p></div>
+    <div class="card"><span class="tagline">Declaração honesta</span><img class="ev" src="{{IMG_OK}}" alt="Talhão de trigo no SPOT: polígono declarado em amarelo acompanha as bordas detectadas em ciano"><p class="small">O polígono acompanha as bordas detectadas.</p></div>
+  </div>
+  <p class="small">Variante escolhida ({{VAR_CHOSEN}}), em {{AA_N}} parcelas de teste: detecta <b>{{AA_DET30}}</b> das áreas infladas em +30% e {{AA_DET15}} das infladas em +15%, com {{AA_FA}} de alarme falso (AUC {{AA_AUC30}}). A variante ingênua (A, polígono inteiro) detectava só {{AA_DETA}}: polígonos honestos que englobam vários campos visíveis criavam uma cauda longa de pontuações altas.</p>
+</section>
+
+<section class="slide">
+  <div class="kicker">07 · Agent 03 · região e risco</div>
+  <h2>Declaração, área e vizinhos num score auditável</h2>
+  <div class="grid">
+    <div class="card"><div class="num">{{DC_RECALL}}</div><h3>das culturas falsas detectadas</h3><p>Limiar τ = {{DC_TAU}} na P(trigo), escolhido na validação com no máximo 3% de alarmes em trigos reais.</p></div>
+    <div class="card"><div class="num">{{DC_FA}}</div><h3>alarmes por 100 trigos reais</h3><p>Custo operacional: vistorias desnecessárias.</p></div>
+    <div class="card"><div class="num">5</div><h3>componentes no score</h3><p>Declaração 35% · área 20% · vigor 25% · ciclo 10% · manchas 10%. Divergência de cultura → risco alto; área não sustentada → no mínimo alto.</p></div>
+  </div>
+  <div class="tablewrap"><table>
+    <tr><th>Cenário ({{N_PAYLOADS}} parcelas de teste)</th><th>Parcelas</th><th>Cultura não confirmada</th><th>Área não sustentada</th><th>Risco alto / médio / baixo</th></tr>
+    {{SCEN_ROWS}}
+  </table></div>
+  <p class="small">Parcelas cortadas pela borda da imagem não são auditáveis: o sistema sinaliza a limitação em vez de acusar.</p>
 </section>
 
 <section class="slide">
@@ -178,7 +201,7 @@ img.ev{width:100%;border-radius:12px;margin-top:8px}
   <div class="grid">
     <div class="card"><div class="num">p{{LOW_PCT}}</div><h3>vigor acumulado (integral do NDVI)</h3><p>Abaixo de quase todos os trigos da região.</p></div>
     <div class="card"><div class="num">{{LOW_PEAK}}</div><h3>NDVI de pico</h3><p>Percentil {{LOW_PEAK_PCT}} da região.</p></div>
-    <div class="card"><div class="num">{{LOW_DELAY}} d</div><h3>atraso do pico</h3><p>Em relação à mediana regional.</p></div>
+    <div class="card"><div class="num">{{LOW_DELAY}} d</div><h3>diferença na data do pico</h3><p>Em relação à mediana regional (positivo = atraso).</p></div>
   </div>
 </section>
 
@@ -189,36 +212,37 @@ img.ev{width:100%;border-radius:12px;margin-top:8px}
     <tr><th>Modelo</th><th>Passa na validação</th><th>Risco igual ao Agent 03</th><th>Latência (mediana)</th><th>Tokens (entrada + saída)</th></tr>
     {{LLM_ROWS}}
   </table></div>
-  <p class="small">Teste em {{LLM_N}} parcelas, 25% delas declarações falsas simuladas. A validação confere: nível de risco igual ao do Agent 03, evidências existentes (garantidas por <code>enum</code>), números presentes no payload, menção à divergência quando ela existe e coerência entre prioridade e risco.</p>
+  <p class="small">{{LLM_N}} parcelas (36 honestas, 12 com cultura falsa, 12 com área inflada). A validação confere: risco igual ao do Agent 03, evidências existentes (garantidas por <code>enum</code>), números presentes no payload, menção à divergência de cultura e de área quando existem, e coerência entre prioridade e risco.</p>
   <div class="grid">
-    <div class="card"><span class="tagline">gpt-4o-mini · correto, mas raso</span><p class="small">“{{S_4O}}”</p><p class="small">Não diz por que a evidência rejeita o trigo nem usa a imagem SPOT.</p></div>
-    <div class="card"><span class="tagline">gpt-4.1-mini · ambíguo</span><p class="small">“{{S_41}}”</p><p class="small">Afirma que o vigor está “baixo em relação ao benchmark de trigo” e só depois diz que a comparação não se aplica.</p></div>
-    <div class="card"><span class="tagline">gpt-5.4-mini · escolhido</span><p class="small">“{{S_54}}”</p><p class="small">Cruza as duas modalidades (série e SPOT) e não usa a comparação com trigos.</p></div>
+    <div class="card"><span class="tagline">gpt-4o-mini</span><p class="small">“{{S_4O}}”</p></div>
+    <div class="card"><span class="tagline">gpt-4.1-mini</span><p class="small">“{{S_41}}”</p></div>
+    <div class="card"><span class="tagline">gpt-5.4-mini · escolhido</span><p class="small">“{{S_54}}”</p></div>
   </div>
-  <p class="small">Caso de teste: cevada de primavera declarada como trigo. Numa rodada anterior, com uma forrageira declarada como trigo, o gpt-4o-mini <b>usou</b> o atraso e o vigor regionais de trigo para justificar o risco, um erro de raciocínio que as checagens automáticas não pegam. Também houve falhas automáticas: números fora do payload em 1/{{LLM_N}} pareceres do gpt-4o-mini e 2/{{LLM_N}} do gpt-4.1-mini. Custo da escolha: ~2× mais tokens de saída, com a mesma latência.</p>
+  <p class="small">Mesmo caso para os três: trigo com área declarada +30%. {{LLM_QUAL}}</p>
 </section>
 
 <section class="slide">
   <div class="kicker">09 · Exemplo ponta a ponta</div>
-  <h2>Trigo real, mas bem abaixo dos vizinhos</h2>
+  <h2>Trigo de verdade, área declarada a maior</h2>
   <div class="grid2">
     <div class="card"><span class="tagline">Evidências</span>
-      <p><b>Declaração:</b> trigo · P(confirmado) = {{LOW_P}} ✓ (limiar {{DC_TAU}})<br><b>Área:</b> {{LOW_AREA}} ha<br><b>Vigor acumulado:</b> percentil {{LOW_PCT}} entre {{LOW_N_REG}} trigos da região<br><b>Pico do NDVI:</b> {{LOW_PEAK}} (p{{LOW_PEAK_PCT}}) · atraso de {{LOW_DELAY}} dias<br><b>Score:</b> {{LOW_SCORE}} → risco <b>{{LOW_LEVEL}}</b></p></div>
-    <div class="card"><span class="tagline">Parecer · {{LLM_MODEL}}</span><p class="small">{{LOW_DIAG}}</p><ul class="small">{{LOW_RECS}}</ul></div>
+      <p><b>Cultura:</b> trigo · P = {{INF_P}} ✓ · confirmado desde {{INF_CONF}}<br><b>Área:</b> declarada {{INF_DECL}} ha × cadastro {{INF_REG}} ha<br><b>Auditoria:</b> pontuação {{INF_SCORE}} &gt; limiar {{INF_TAU}} → área não sustentada<br><b>Score:</b> {{INF_SCORE_RISK}} → risco <b>{{INF_LEVEL}}</b></p>
+      <img class="ev" src="{{IMG_INFL}}" alt="Mesmo talhão: polígono declarado em amarelo maior que o talhão, bordas em ciano"></div>
+    <div class="card"><span class="tagline">Parecer · {{LLM_MODEL}}</span><p class="small">{{INF_DIAG}}</p><ul class="small">{{INF_RECS}}</ul></div>
   </div>
-  <div class="card" style="margin-top:18px"><span class="tagline">E quando a declaração é falsa?</span><p class="small">Milho declarado como trigo: P(trigo) = {{MIS_P}}; o modelo temporal sugere <b>{{MIS_ALT}}</b>. Parecer: “{{MIS_DIAG}}”</p></div>
+  <div class="card" style="margin-top:18px"><span class="tagline">E quando a cultura é outra?</span><p class="small">Milho declarado como trigo: P(trigo) = {{MIS_P}}; o modelo sugere <b>{{MIS_ALT}}</b>. Parecer: “{{MIS_DIAG}}”</p></div>
 </section>
 
 <section class="slide">
   <div class="kicker">10 · Limitações e próximos passos</div>
   <h2>O que ainda não está resolvido</h2>
   <div class="grid">
-    <div class="card"><h3>Vigor ≠ produtividade</h3><p>O PASTIS não tem dado de colheita, então o percentil de vigor é descritivo e não foi validado contra rendimento. Próximo passo: cruzar com produtividade declarada ou com sinistros de seguro.</p></div>
-    <div class="card"><h3>Uma safra, França</h3><p>Uma safra (2018-19) e 4 regiões francesas. Para o Brasil, é preciso retreinar com dados locais (ex.: trigo no Sul) e com o calendário agrícola de lá.</p></div>
-    <div class="card"><h3>Declarações simuladas</h3><p>As declarações falsas são parcelas de outras culturas rotuladas como trigo. Declarações falsas reais podem ser mais sutis (ex.: trigo × triticale).</p></div>
-    <div class="card"><h3>SPOT com data única</h3><p>Uma imagem por ano, de data não informada. Manchas dependem do momento da cena; o contorno a 10 m gera falsas manchas na borda.</p></div>
-    <div class="card"><h3>Classes raras</h3><p>mIoU de {{A1_MIOU}} nas 18 culturas, por causa de só 90 recortes de treino. Com todos os 2.433 recortes do PASTIS, a referência (U-TAE completo) é bem maior.</p></div>
-    <div class="card"><h3>LLM</h3><p>A avaliação automática pegou erros formais, mas não os de raciocínio. Próximo passo: rubrica de qualidade com avaliação humana ou um LLM avaliador.</p></div>
+    <div class="card"><h3>Fraudes simuladas</h3><p>Culturas trocadas e polígonos ampliados em torno do centroide. Fraudes reais podem ser mais sutis (trigo × triticale, área deslocada para o vizinho).</p></div>
+    <div class="card"><h3>Vigor ≠ produtividade</h3><p>O PASTIS não tem colheita, então o percentil de vigor é descritivo. Próximo passo: cruzar com produtividade ou sinistros.</p></div>
+    <div class="card"><h3>Uma safra, França</h3><p>Para o Brasil, retreinar com dados locais (ex.: trigo no Sul, polígonos do CAR/Sicor) e o calendário de lá.</p></div>
+    <div class="card"><h3>Instâncias fundidas</h3><p>Só {{A2_REC}} das parcelas são separadas individualmente; a auditoria contorna isso, mas medir área absoluta segue em aberto.</p></div>
+    <div class="card"><h3>SPOT de data única</h3><p>Bordas e manchas dependem do momento da cena. Uma série de alta resolução ajudaria.</p></div>
+    <div class="card"><h3>LLM</h3><p>Checagens automáticas pegam erros formais, não de raciocínio. Próximo passo: rubrica com avaliação humana.</p></div>
   </div>
 </section>
 
@@ -228,9 +252,10 @@ img.ev{width:100%;border-radius:12px;margin-top:8px}
   <ul class="small">
     <li>Sainte Fare Garnot & Landrieu. <i>Panoptic Segmentation of Satellite Image Time Series with Convolutional Temporal Attention Networks</i>. ICCV 2021 (PASTIS, U-TAE).</li>
     <li>Astruc et al. <i>OmniSat: Self-Supervised Modality Fusion for Earth Observation</i>. ECCV 2024 (PASTIS-HD).</li>
-    <li>PASTIS-HD · huggingface.co/datasets/IGNF/PASTIS-HD (licença etalab-2.0; SPOT via DINAMIS).</li>
-    <li>Banco Central do Brasil · Resolução CMN 4.427/2015 (fiscalização do crédito rural por sensoriamento remoto) e Resolução CMN 5.267/2025.</li>
-    <li>Gitelson et al. (2002), índice VARI · Ronneberger et al. (2015), U-Net · Sandler et al. (2018), MobileNetV2.</li>
+    <li>Waldner & Diakogiannis. <i>Deep learning on edge: extracting field boundaries from satellite images with a convolutional neural network</i>. Remote Sensing of Environment, 2020 (ResUNet-a).</li>
+    <li>PASTIS-HD · huggingface.co/datasets/IGNF/PASTIS-HD (etalab-2.0) · RPG 2019 · data.geopf.fr (IGN/ASP, Licence Ouverte). Acessados em 20/11/2026.</li>
+    <li>Banco Central do Brasil · Resolução CMN 4.427/2015 e Resolução CMN 5.267/2025.</li>
+    <li>Gitelson et al. (2002), VARI · Ronneberger et al. (2015), U-Net · Sandler et al. (2018), MobileNetV2.</li>
   </ul>
 </section>
 

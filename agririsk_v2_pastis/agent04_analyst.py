@@ -42,10 +42,12 @@ Como ler as evidências:
 `consistent=false` significa que a declaração NÃO foi confirmada — isso precisa abrir o \
 diagnóstico, citando a cultura alternativa sugerida pelo modelo. `confirmed_since` é a \
 primeira data da safra em que a cultura já estava confirmada (com 95% de precisão).
-- `area_audit`: área delimitada na imagem ÷ área declarada. `declared_area_supported=false` \
-significa que a imagem não sustenta a área declarada (possível área declarada a maior) — \
-diga isso explicitamente com as duas áreas em hectares. Se `parcel_cut_by_image_edge`, a \
-área medida não é confiável.
+- `area_audit`: confere se a imagem sustenta o polígono/área declarados. `declared_area_ha` é \
+a área declarada e `registry_area_ha` a do cadastro. `inconsistency_score` mede bordas de outros \
+talhões e áreas não cultivadas na faixa externa do polígono em relação ao núcleo; acima de \
+`threshold_inconsistency` → `declared_area_supported=false` (possível área declarada a maior): \
+diga isso explicitamente, citando as áreas em hectares. `declared_area_supported=null` = não \
+auditável (parcela cortada pela borda da imagem): mencione isso em `limitacoes`.
 - `regional_comparison`: percentis são relativos às parcelas de trigo da mesma região \
 (ex.: ndvi_integral_percentile 8 = vigor acumulado abaixo de 92% dos trigos da região). \
 `peak_delay_days_vs_region` > 0 = ciclo atrasado em relação à região.
@@ -173,7 +175,7 @@ def validate(parecer: dict, payload: dict) -> Dict[str, Any]:
         v = round(float(n.replace(",", ".")), 2)
         if v not in known and not any(abs(v - k) <= 0.051 for k in known):
             issues.append(f"número '{n}' não está no payload")
-    if not f["area_audit"]["declared_area_supported"] and not re.search(r"área|area", parecer["diagnostico"] + parecer["parecer_risco"], re.I):
+    if f["area_audit"]["declared_area_supported"] is False and not re.search(r"área|area", parecer["diagnostico"] + parecer["parecer_risco"], re.I):
         issues.append("área declarada não sustentada, mas o parecer não menciona a área")
     if f["risk_level"] == "low" and any(r["prioridade"] == "alta" for r in parecer["recomendacoes"]):
         issues.append("recomendação de prioridade alta num parecer de risco baixo")

@@ -168,7 +168,9 @@ def fuse_agent_outputs(a1: dict, a2: dict) -> dict:
     # --- componentes (0-1) ---------------------------------------------------
     comp = {
         "declaration": 1.0 if mismatch else round(max(0.0, (0.9 - p) / 0.9), 3),
-        "area": 1.0 if not aa["declared_area_supported"] else round(min(1.0, max(0.0, 1 - aa["delineated_to_declared_ratio"]) / 0.3), 3),
+        # None = não auditável (parcela cortada pela borda da imagem): não pesa no risco
+        "area": (0.0 if aa["declared_area_supported"] is None else 1.0 if aa["declared_area_supported"] is False
+                 else round(0.5 * min(1.0, max(0.0, aa["inconsistency_score"]) / aa["threshold_inconsistency"]), 3)),
         "vigor": (0.9 if pct_integral is not None and pct_integral < 10 else 0.6 if pct_integral is not None and pct_integral < 25
                   else 0.3 if pct_integral is not None and pct_integral < 50 else 0.1),
         "timing": round(min(1.0, abs(delay) / 48), 3),
@@ -179,10 +181,10 @@ def fuse_agent_outputs(a1: dict, a2: dict) -> dict:
     score = sum(WEIGHTS[k] * v for k, v in comp.items())
     if mismatch:
         score = max(score, 0.70); flags.append("declared_crop_not_confirmed")
-    if not aa["declared_area_supported"]:
+    if aa["declared_area_supported"] is False:
         score = max(score, 0.55); flags.append("declared_area_not_supported_by_image")
-    if aa["parcel_cut_by_image_edge"]:
-        flags.append("parcel_cut_by_image_edge_area_unreliable")
+    elif aa["declared_area_supported"] is None:
+        flags.append("area_not_auditable_parcel_cut_by_image_edge")
     if lv is None:
         flags.append("parcel_too_small_for_vhr_analysis")
     flags.append("vigor_not_validated_against_yield")

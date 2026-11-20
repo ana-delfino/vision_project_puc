@@ -12,7 +12,7 @@
 #                      antecipada, benchmark regional e evidências para o Agent 04
 #
 # Variáveis: JOB, GPU (T4 | none), HIGH_MEM (1 = máquina com mais RAM), PER_FOLD (30),
-#            EPOCHS01 (80), EPOCHS02 (40), N_PAYLOADS (60), COLAB_SESSION
+#            EPOCHS01 (80), EPOCHS02 (40), N_PAYLOADS (60), UPLOAD_MODELS (1), COLAB_SESSION
 # Requer: colab-cli autenticado e PYTHON_KEYRING_BACKEND configurado (ver README).
 set -euo pipefail
 cd "$(dirname "$0")"
@@ -37,7 +37,7 @@ sync_and_launch() {
   tmp="$(mktemp -d)"
   tar czf "$tmp/code.tgz" $CODE
   colab upload -s "$S" "$tmp/code.tgz" /content/agririsk_v2_code.tgz
-  if [ "$JOB" = "eval" ]; then             # modelos já treinados na GPU
+  if [ "$JOB" = "eval" ] && [ "${UPLOAD_MODELS:-1}" = "1" ]; then   # modelos já treinados na GPU
     tar czf "$tmp/models.tgz" artifacts/agent01 artifacts/agent02/unet_delineation.pt artifacts/agent02/metrics.json
     colab upload -s "$S" "$tmp/models.tgz" /content/agririsk_v2_models.tgz
   fi
@@ -46,7 +46,7 @@ sync_and_launch() {
 import subprocess, tarfile, os
 os.makedirs("/content/agririsk_v2", exist_ok=True)
 tarfile.open("/content/agririsk_v2_code.tgz").extractall("/content/agririsk_v2", filter="data")
-if os.path.exists("/content/agririsk_v2_models.tgz"):
+if os.path.exists("/content/agririsk_v2_models.tgz") and "${UPLOAD_MODELS:-1}" == "1":
     tarfile.open("/content/agririsk_v2_models.tgz").extractall("/content/agririsk_v2", filter="data")
 subprocess.run("pkill -f colab_remote_", shell=True)
 log = open("/content/agririsk_v2/job.log", "w")
