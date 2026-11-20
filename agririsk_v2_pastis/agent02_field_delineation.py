@@ -222,15 +222,45 @@ def inflate_mask(mask, k):
     return cv2.warpAffine(mask.astype(np.uint8), M, mask.shape[::-1], flags=cv2.INTER_NEAREST).astype(bool)
 
 
-def audit_features(prob, mask):
+RING_FRAC = 0.30             # faixa externa = 30% da área do polígono
+VARIANTS = {
+    "A": "% de borda no interior + % não cultivada (polígono inteiro)",
+    "B": "(borda + não cultivada) na faixa externa − o mesmo no núcleo",
+    "C": "(borda + não cultivada) só na faixa externa",
+}
+
+
+def ring_core(mask, frac=RING_FRAC):
+    """núcleo = erosão até sobrar (1 − frac) da área; faixa = resto, sem a borda de 6 m."""
+    area, core, k = mask.sum(), mask.copy(), 0
+    while core.sum() > (1 - frac) * area and k < 80:
+        core = cv2.erode(core.astype(np.uint8), np.ones((3, 3), np.uint8)).astype(bool)
+        k += 1
     inner = cv2.erode(mask.astype(np.uint8), np.ones((2 * AUDIT_ERODE_PX + 1,) * 2, np.uint8)).astype(bool)
-    if inner.sum() < 50:
+    return core, inner & ~core
+
+
+def audit_features(prob, mask, variant=None):
+    """Componentes e as 3 pontuações; `inconsistency_score` = a da variante em uso."""
+    inner = cv2.erode(mask.astype(np.uint8), np.ones((2 * AUDIT_ERODE_PX + 1,) * 2, np.uint8)).astype(bool)
+    core, ring = ring_core(mask)
+    if inner.sum() < 50 or core.sum() < 30 or ring.sum() < 30:
         return None
     ext, bnd = prob[0].astype(np.float32), prob[1].astype(np.float32)
+    bad = lambda r: 100 * ((bnd[r] > 0.5).mean() + (ext[r] < 0.5).mean())
     f = {"interior_boundary_pct": round(float(100 * (bnd[inner] > 0.5).mean()), 2),
-         "non_field_pct": round(float(100 * (ext[mask] < 0.5).mean()), 2)}
-    f["inconsistency_score"] = round(f["interior_boundary_pct"] + f["non_field_pct"], 2)
+         "non_field_pct": round(float(100 * (ext[mask] < 0.5).mean()), 2),
+         "outer_ring_score": round(float(bad(ring)), 2), "core_score": round(float(bad(core)), 2)}
+    f["score_A"] = round(f["interior_boundary_pct"] + f["non_field_pct"], 2)
+    f["score_B"] = round(f["outer_ring_score"] - f["core_score"], 2)
+    f["score_C"] = f["outer_ring_score"]
+    f["inconsistency_score"] = f[f"score_{variant or current_variant()}"]
     return f
+
+
+def current_variant():
+    p = OUT / "audit_variants.json"
+    return json.loads(p.read_text())["chosen_on_validation"] if p.exists() else "A"
 
 
 def _audit_rows(rows, probs, inflations=(0.0,) + INFLATIONS, min_ha=MIN_PARCEL_HA):
@@ -247,35 +277,55 @@ def _audit_rows(rows, probs, inflations=(0.0,) + INFLATIONS, min_ha=MIN_PARCEL_H
                 ys, xs = np.where(mk)
                 if ys.min() == 0 or xs.min() == 0 or ys.max() == H - 1 or xs.max() == H - 1:
                     break                                      # sai da imagem: não auditável
-                f = audit_features(pr, mk)
+                f = audit_features(pr, mk, "A")
                 if f:
                     out.append({"patch": r["patch"], "parcel": int(pid), "inflation": k, **f})
     return out
 
 
-def audit():
-    """Calibra (validação) e avalia (teste) a auditoria de área. Só inferência."""
+def _calibrate(va, te, key):
+    """τ = p95 das declarações honestas da validação (5% de alarmes); métricas no teste."""
     from sklearn.metrics import roc_auc_score
+    hv = np.array([x[key] for x in va if x["inflation"] == 0])
+    tau = float(np.percentile(hv, 95))
+    out = {"tau": round(tau, 3)}
+    for split, rows in (("val", va), ("test", te)):
+        h = np.array([x[key] for x in rows if x["inflation"] == 0])
+        out[f"{split}_false_alarm"] = round(float((h > tau).mean()), 4)
+        for k in INFLATIONS:
+            sk = np.array([x[key] for x in rows if x["inflation"] == k])
+            out[f"{split}_det_{int(k * 100)}"] = round(float((sk > tau).mean()), 4)
+            out[f"{split}_auc_{int(k * 100)}"] = round(float(roc_auc_score(
+                np.r_[np.zeros(len(h)), np.ones(len(sk))], np.r_[h, sk])), 4)
+    out["n_val"], out["n_test"] = int((np.array([x["inflation"] for x in va]) == 0).sum()), \
+        int((np.array([x["inflation"] for x in te]) == 0).sum())
+    return out
+
+
+def audit():
+    """Compara as 3 variantes, ESCOLHE pela validação (maior detecção de +30% com 5% de
+    alarmes; desempate pela AUC) e reporta o teste. Só inferência."""
     c = _load()
     rows_va, rows_te = manifest("val"), manifest("test")
     pv = predict(c["model"], np.stack([load_patch(r["patch"])["spot"] for r in rows_va]))
     pt = predict(c["model"], np.stack([load_patch(r["patch"])["spot"] for r in rows_te]))
     va, te = _audit_rows(rows_va, pv), _audit_rows(rows_te, pt)
-    hv = np.array([x["inconsistency_score"] for x in va if x["inflation"] == 0])
-    tau = float(np.percentile(hv, 95))                     # 5% de alarmes em declarações honestas (val)
-    ht = np.array([x["inconsistency_score"] for x in te if x["inflation"] == 0])
-    res = {"method": "pontuação de inconsistência = % de borda no interior + % não cultivada no polígono",
-           "tau_inconsistency": round(tau, 3), "n_test_parcels": int(len(ht)),
-           "honest_false_alarm_rate_test": round(float((ht > tau).mean()), 4),
-           "honest_median_score_test": round(float(np.median(ht)), 2)}
+    variants = {v: _calibrate(va, te, f"score_{v}") for v in VARIANTS}
+    for v, r in variants.items():
+        print(v, VARIANTS[v], json.dumps(r), flush=True)
+    best = max(VARIANTS, key=lambda v: (variants[v]["val_det_30"], variants[v]["val_auc_30"]))
+    (OUT / "audit_variants.json").write_text(json.dumps(
+        {"description": VARIANTS, "results": variants, "chosen_on_validation": best}, indent=1, ensure_ascii=False))
+    b = variants[best]
+    res = {"variant": best, "method": VARIANTS[best], "tau_inconsistency": b["tau"], "n_test_parcels": b["n_test"],
+           "honest_false_alarm_rate_test": b["test_false_alarm"]}
     for k in INFLATIONS:
-        sk = np.array([x["inconsistency_score"] for x in te if x["inflation"] == k])
-        res[f"detection_rate_inflated_{int(k * 100)}pct"] = round(float((sk > tau).mean()), 4)
-        res[f"auc_inflated_{int(k * 100)}pct"] = round(float(roc_auc_score(
-            np.r_[np.zeros(len(ht)), np.ones(len(sk))], np.r_[ht, sk])), 4)
-    print(json.dumps(res, indent=1, ensure_ascii=False))
+        res[f"detection_rate_inflated_{int(k * 100)}pct"] = b[f"test_det_{int(k * 100)}"]
+        res[f"auc_inflated_{int(k * 100)}pct"] = b[f"test_auc_{int(k * 100)}"]
+    print("escolhida pela validação:", best, json.dumps(res, ensure_ascii=False))
     m = json.loads((OUT / "metrics.json").read_text())
-    m["area_audit_instance_based_discarded"] = m.pop("area_audit", None)
+    if "area_audit" in m and "variant" not in m["area_audit"]:
+        m.setdefault("area_audit_instance_based_discarded", m["area_audit"])
     m["area_audit"] = res
     (OUT / "metrics.json").write_text(json.dumps(m, indent=1))
     (OUT / "area_audit_test.json").write_text(json.dumps(te))

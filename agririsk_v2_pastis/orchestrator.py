@@ -12,8 +12,10 @@ Cenários de teste (todas as parcelas do fold 5, "declaradas como trigo"):
   area_inflada  · trigo com área declarada 30% maior que a do cadastro
 
 Uso
-  python orchestrator.py --n 4                         # pareceres de parcelas de teste
-  python orchestrator.py --eval-llm --n 12 --models gpt-4o-mini gpt-4.1-mini gpt-5.4-mini
+  python orchestrator.py --export-payloads --n 60       # (VM Colab) Agents 01-03 → artifacts/payloads
+  python orchestrator.py --from-payloads --n 8          # (local) Agent 04 → artifacts/reports
+  python orchestrator.py --eval-llm --n 40              # (local) comparação de LLMs sobre as evidências
+  python orchestrator.py --n 4                          # pipeline completo num lugar só (LangGraph)
 """
 import argparse
 import json
@@ -137,12 +139,62 @@ def run_many(n, model=None, out_dir=None):
     return results
 
 
-def eval_llm(n, models):
-    """Mesmas evidências (Agents 01-03 rodam uma vez) → cada modelo emite o parecer."""
-    pipe_inputs = []
+# ---------------------------------------------------------------------------
+# Divisão de computação: Agents 01-03 (visão) na VM do Colab → evidências em JSON;
+# Agent 04 (chamada de API) aqui, lendo esses JSONs. A chave da OpenAI não sai daqui.
+# ---------------------------------------------------------------------------
+PAYLOADS = C.ARTIFACTS / "payloads"
+
+
+def export_payloads(n):
+    """Roda os Agents 01-03 (com tempos) e grava uma evidência por parcela. Sem LLM."""
+    PAYLOADS.mkdir(parents=True, exist_ok=True)
     for patch, parcel, lab, decl_ha, scenario in pick_parcels(n):
-        a1, a2 = a01.run(patch, parcel), a02.run(patch, parcel, decl_ha, save_evidence=False)
-        pipe_inputs.append((a1, a2, fuse_agent_outputs(a1, a2), scenario))
+        t0 = time.time(); a1 = a01.run(patch, parcel); t1 = time.time()
+        a2 = a02.run(patch, parcel, decl_ha); t2 = time.time()
+        a3 = fuse_agent_outputs(a1, a2); t3 = time.time()
+        rec = to_jsonable({"patch": patch, "parcel": parcel, "scenario": scenario, "true_crop_id": lab,
+                           "declared_area_ha": decl_ha, "agent01_output": a1, "agent02_output": a2, "agent03_output": a3,
+                           "trace": [{"agent": "agent01", "seconds": round(t1 - t0, 2)},
+                                     {"agent": "agent02", "seconds": round(t2 - t1, 2)},
+                                     {"agent": "agent03", "seconds": round(t3 - t2, 3)}]})
+        (PAYLOADS / f"{scenario}_{patch}_{parcel}.json").write_text(json.dumps(rec, ensure_ascii=False))
+    print(f"[export] {len(list(PAYLOADS.glob('*.json')))} evidências em {PAYLOADS}")
+
+
+def load_payloads(n=None):
+    files = sorted(PAYLOADS.glob("*.json"))
+    recs = [json.loads(f.read_text()) for f in files]
+    return recs[:n] if n else recs
+
+
+def reports_from_payloads(n, model=None):
+    """Agent 04 sobre as evidências exportadas → relatórios ponta a ponta."""
+    out_dir = C.ARTIFACTS / "reports"
+    out_dir.mkdir(parents=True, exist_ok=True)
+    rng = np.random.default_rng(C.SEED)
+    recs = load_payloads()
+    by_s = {}
+    for r in recs:
+        by_s.setdefault(r["scenario"], []).append(r)
+    pick = []
+    for sc, k in (("honesto", n - 2 * (n // 4)), ("area_inflada", n // 4), ("cultura_falsa", n // 4)):
+        rows = by_s.get(sc, [])
+        pick += [rows[i] for i in rng.choice(len(rows), min(k, len(rows)), replace=False)]
+    for r in pick:
+        t0 = time.time()
+        p, payload = generate_parecer(r["agent01_output"], r["agent02_output"], r["agent03_output"], model)
+        r["agent04_output"], r["validation"] = p, validate(p, payload)
+        r["trace"].append({"agent": "agent04", "seconds": round(time.time() - t0, 2)})
+        r["errors"] = []
+        (out_dir / f"{r['patch']}_{r['parcel']}.json").write_text(json.dumps(r, indent=1, ensure_ascii=False))
+    return pick
+
+
+def eval_llm(n, models):
+    """Mesmas evidências (Agents 01-03 já rodaram na VM) → cada modelo emite o parecer."""
+    pipe_inputs = [(r["agent01_output"], r["agent02_output"], r["agent03_output"], r["scenario"])
+                   for r in load_payloads(n)]
     summary, samples = {}, {}
     for model in models:
         rows = []
@@ -184,17 +236,21 @@ if __name__ == "__main__":
     ap.add_argument("--eval-llm", action="store_true")
     ap.add_argument("--models", nargs="+", default=["gpt-4o-mini", "gpt-4.1-mini", "gpt-5.4-mini"])
     ap.add_argument("--model", default=None)
+    ap.add_argument("--export-payloads", action="store_true", help="(VM) Agents 01-03 → artifacts/payloads")
+    ap.add_argument("--from-payloads", action="store_true", help="(local) Agent 04 sobre as evidências exportadas")
     a = ap.parse_args()
-    if a.eval_llm:
+    if a.export_payloads:
+        export_payloads(a.n)
+    elif a.eval_llm:
         eval_llm(a.n, a.models)
     else:
-        for r in run_many(a.n, a.model):
+        for r in (reports_from_payloads(a.n, a.model) if a.from_payloads else run_many(a.n, a.model)):
             a3, a4 = r["agent03_output"], r["agent04_output"]
             print(f"\n=== recorte {r['patch']} · parcela {r['parcel']} · cenário {r['scenario']} (classe real {r['true_crop_id']}) ===")
             if a3:
                 dc, rc = a3["declaration_check"], a3["regional_comparison"]
                 aa = a3["area_audit"]
-                print(f"  área decl {aa['declared_area_ha']} ha / delim {aa['delineated_area_ha']} ha ok={aa['declared_area_supported']} · "
+                print(f"  área decl {aa['declared_area_ha']} ha (cadastro {aa['registry_area_ha']}) ok={aa['declared_area_supported']} · "
                       f"confirmado desde {dc['confirmed_since']}")
                 print(f"  declaração ok={dc['consistent']} P={dc['p_declared']} · vigor pct "
                       f"{rc['ndvi_integral_percentile']} · atraso {rc['peak_delay_days_vs_region']}d · "
