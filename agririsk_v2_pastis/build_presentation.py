@@ -74,7 +74,7 @@ STYLE = ('<style>.g{{stroke:#1c355e;stroke-width:1}}.ax{{fill:#8fa1be;font-size:
 # ---------------------------------------------------------------------------
 def early_chart():
     e = m1["early_season"]["by_cutoff"]
-    W, H, L, R, T, B = 760, 280, 46, 150, 16, 34
+    W, H, L, R, T, B = 760, 280, 46, 190, 16, 34
     n = len(e)
     x = lambda i: L + i * (W - L - R) / (n - 1)
     y = lambda v: T + (1 - v) * (H - T - B)
