@@ -1,0 +1,10 @@
+# CPU: pip install --index-url https://download.pytorch.org/whl/cpu torch torchvision
+torch>=2.9
+torchvision
+segmentation-models-pytorch>=0.5
+numpy
+scikit-learn
+opencv-python-headless
+openai>=1.40
+python-dotenv
+langgraph>=1.0
