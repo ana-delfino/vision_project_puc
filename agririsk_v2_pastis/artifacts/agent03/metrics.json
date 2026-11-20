@@ -1,0 +1,24 @@
+{
+ "n_test_parcels": 1043,
+ "n_test_wheat": 198,
+ "wheat_detection_test": {
+  "auc": 0.9866,
+  "f1": 0.9046,
+  "precision": 0.9822,
+  "recall": 0.8384
+ },
+ "declaration_check": {
+  "tau": 0.07,
+  "test_recall_of_mismatch": 0.8769,
+  "test_false_alarm_rate_on_true_wheat": 0.0253,
+  "expected_precision_at_5pct_prevalence": 0.6464,
+  "alerts_per_100_true_wheat_parcels": 2.5
+ },
+ "benchmark_parcels_per_region": {
+  "t30uxv": 150,
+  "t31tfj": 62,
+  "t31tfm": 125,
+  "t32ulu": 216,
+  "ALL": 553
+ }
+}

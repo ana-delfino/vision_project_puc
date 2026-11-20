@@ -1,0 +1,107 @@
+{
+ "model": "U-Net + MobileNetV2 (ImageNet) \u00b7 extens\u00e3o + borda + watershed",
+ "epochs": 40,
+ "device": "cuda",
+ "train_seconds": 283.9,
+ "gsd_m": 2.0,
+ "labels": "RPG 2019 (IGN/ASP) rasterizado a 2 m",
+ "test": {
+  "extent_iou": 0.8713,
+  "boundary_precision": 0.7288,
+  "boundary_recall": 0.8024,
+  "boundary_f1": 0.7605,
+  "n_parcels": 698,
+  "parcel_iou_median": 0.4779,
+  "parcels_recovered_iou50": 0.4814
+ },
+ "val": {
+  "extent_iou": 0.8682,
+  "boundary_precision": 0.7218,
+  "boundary_recall": 0.8209,
+  "boundary_f1": 0.7626,
+  "n_parcels": 706,
+  "parcel_iou_median": 0.5156,
+  "parcels_recovered_iou50": 0.5184
+ },
+ "low_vigor_pct_wheat_test": {
+  "median": 1.87,
+  "p90": 11.41,
+  "n": 191
+ },
+ "history": [
+  {
+   "epoch": 5,
+   "loss": 0.9490365476319285,
+   "boundary_f1": 0.6008622766408671,
+   "parcel_iou_median": 0.10162903390874284,
+   "extent_iou": 0.8098891122687685
+  },
+  {
+   "epoch": 10,
+   "loss": 0.7194427992358352,
+   "boundary_f1": 0.6826024037455977,
+   "parcel_iou_median": 0.19579550255138728,
+   "extent_iou": 0.8549638511088921
+  },
+  {
+   "epoch": 15,
+   "loss": 0.6851106556979093,
+   "boundary_f1": 0.7224194586331905,
+   "parcel_iou_median": 0.39788150107575715,
+   "extent_iou": 0.8641750544875749
+  },
+  {
+   "epoch": 20,
+   "loss": 0.6519021500240673,
+   "boundary_f1": 0.7410592280213788,
+   "parcel_iou_median": 0.44715421933212585,
+   "extent_iou": 0.8631312084273992
+  },
+  {
+   "epoch": 25,
+   "loss": 0.6179396094697894,
+   "boundary_f1": 0.7442399322233492,
+   "parcel_iou_median": 0.4872424859969344,
+   "extent_iou": 0.8555416199983029
+  },
+  {
+   "epoch": 30,
+   "loss": 0.5998714782974937,
+   "boundary_f1": 0.7624975054524243,
+   "parcel_iou_median": 0.46267005290730345,
+   "extent_iou": 0.8761703947057394
+  },
+  {
+   "epoch": 35,
+   "loss": 0.5727104273709384,
+   "boundary_f1": 0.7601924812300079,
+   "parcel_iou_median": 0.4813614386597309,
+   "extent_iou": 0.8620121222553966
+  },
+  {
+   "epoch": 40,
+   "loss": 0.5561261989853599,
+   "boundary_f1": 0.7625686537989881,
+   "parcel_iou_median": 0.5156353387604515,
+   "extent_iou": 0.868162807256825
+  }
+ ],
+ "area_audit_instance_based_discarded": {
+  "tau_area_ratio": 0.327,
+  "honest_false_alarm_rate_test": 0.033,
+  "area_abs_pct_error_median_matched": 15.09,
+  "detection_rate_inflated_15pct": 0.0372,
+  "detection_rate_inflated_30pct": 0.043
+ },
+ "area_audit": {
+  "method": "pontua\u00e7\u00e3o de inconsist\u00eancia = % de borda no interior + % n\u00e3o cultivada no pol\u00edgono",
+  "tau_inconsistency": 74.78,
+  "n_test_parcels": 691,
+  "honest_false_alarm_rate_test": 0.0347,
+  "honest_median_score_test": 3.34,
+  "detection_rate_inflated_15pct": 0.0358,
+  "auc_inflated_15pct": 0.7862,
+  "detection_rate_inflated_30pct": 0.0381,
+  "auc_inflated_30pct": 0.8735
+ }
+}

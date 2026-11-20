@@ -20,7 +20,8 @@ JOB="${JOB:-train}"
 if [ "$JOB" = "eval" ]; then GPU="${GPU:-none}"; S="${COLAB_SESSION:-agririsk-v2-cpu}"; SCRIPT=colab_remote_eval.sh
 else GPU="${GPU:-T4}"; S="${COLAB_SESSION:-agririsk-v2}"; SCRIPT=colab_remote_train.sh; fi
 CODE="config.py common.py prepare_data.py prepare_rpg.py agent01_temporal_utae.py agent02_field_delineation.py
-      agent03_regional_fusion.py agent04_analyst.py orchestrator.py colab_remote_train.sh colab_remote_eval.sh
+      agent03_regional_fusion.py agent04_analyst.py orchestrator.py build_wheat_index.py
+      colab_remote_train.sh colab_remote_eval.sh
       data_index/wheat_patches.json data_index/label_names.json data_index/rpg_polygons.json.gz"
 
 cexec() {   # colab exec com retentativas (a conexão com a VM às vezes cai)
