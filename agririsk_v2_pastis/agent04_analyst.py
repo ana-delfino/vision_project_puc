@@ -8,8 +8,10 @@ LLM da OpenAI (padrão gpt-5.4-mini, escolhido por avaliação; configurável) c
      que existem no JSON de entrada.
   3. Validação pós-geração (v2): nível de risco = Agent 03; números citados existem
      no payload; se a declaração diverge, o parecer TEM de dizer isso.
-  4. Telemetria por chamada: latência e tokens (para comparar modelos).
-  5. Modo offline (template) se não houver chave.
+  4. Nova tentativa: se a validação reprovar, os problemas voltam ao modelo e ele
+     reemite o parecer completo (AGRIRISK_LLM_RETRIES, padrão 1).
+  5. Telemetria por chamada: latência, tokens e tentativas (para comparar modelos).
+  6. Modo offline (template) se não houver chave.
 
 Chave: .env com API_KEY_GPT (raiz do repositório ou desta pasta).
 """
@@ -127,30 +129,55 @@ def build_payload(a1: dict, a2: dict, a3: dict) -> dict:
             "regional_fusion": {**a3, "area_audit": _area_audit_view(a3["area_audit"])}}
 
 
-def generate_parecer(a1: dict, a2: dict, a3: dict, model: str | None = None) -> tuple[dict, dict]:
+MAX_RETRIES = int(os.environ.get("AGRIRISK_LLM_RETRIES", 1))   # novas tentativas se a validação reprovar
+
+
+def _chat(client, model, messages, schema):
+    # modelos de raciocínio (gpt-5*, o*) só aceitam a temperatura padrão
+    extra = {} if model.startswith(("gpt-5", "o1", "o3", "o4")) else {"temperature": 0.2}
+    resp = client.chat.completions.create(
+        model=model, **extra, messages=messages,
+        response_format={"type": "json_schema", "json_schema": {
+            "name": "parecer_trigo", "strict": True, "schema": schema}},
+    )
+    msg = resp.choices[0].message
+    if msg.refusal:
+        raise RuntimeError(f"recusado: {msg.refusal}")
+    return msg.content, resp.usage
+
+
+def generate_parecer(a1: dict, a2: dict, a3: dict, model: str | None = None,
+                     max_retries: int | None = None) -> tuple[dict, dict]:
+    """Gera o parecer; se a validação pós-geração reprovar, devolve ao modelo a lista de
+    problemas e pede o parecer completo corrigido (até `max_retries` vezes). O `_meta`
+    registra o resultado da 1ª tentativa, para medir o ganho da nova tentativa."""
     payload = build_payload(a1, a2, a3)
     key = os.environ.get("API_KEY_GPT")
     if not key:
         return template_parecer(payload), payload
     model = model or C.LLM_MODEL
-    t0 = time.time()
-    # modelos de raciocínio (gpt-5*, o*) só aceitam a temperatura padrão
-    extra = {} if model.startswith(("gpt-5", "o1", "o3", "o4")) else {"temperature": 0.2}
-    resp = openai.OpenAI(api_key=key).chat.completions.create(
-        model=model, **extra,
-        messages=[{"role": "system", "content": SYSTEM_PROMPT},
-                  {"role": "user", "content": "Emita o parecer para as evidências abaixo.\n\n<evidencias>\n"
-                                              + json.dumps(payload, ensure_ascii=False) + "\n</evidencias>"}],
-        response_format={"type": "json_schema", "json_schema": {
-            "name": "parecer_trigo", "strict": True, "schema": build_schema(evidence_paths(payload))}},
-    )
-    msg = resp.choices[0].message
-    if msg.refusal:
-        raise RuntimeError(f"recusado: {msg.refusal}")
-    parecer = json.loads(msg.content)
+    max_retries = MAX_RETRIES if max_retries is None else max_retries
+    client, schema = openai.OpenAI(api_key=key), build_schema(evidence_paths(payload))
+    messages = [{"role": "system", "content": SYSTEM_PROMPT},
+                {"role": "user", "content": "Emita o parecer para as evidências abaixo.\n\n<evidencias>\n"
+                                            + json.dumps(payload, ensure_ascii=False) + "\n</evidencias>"}]
+    t0, tok_in, tok_out, first_issues = time.time(), 0, 0, None
+    for attempt in range(1, max_retries + 2):
+        content, usage = _chat(client, model, messages, schema)
+        tok_in, tok_out = tok_in + usage.prompt_tokens, tok_out + usage.completion_tokens
+        parecer = json.loads(content)
+        issues = validate(parecer, payload)["issues"]
+        if first_issues is None:
+            first_issues = issues
+        if not issues or attempt > max_retries:
+            break
+        messages += [{"role": "assistant", "content": content},
+                     {"role": "user", "content": "A validação automática reprovou o parecer:\n"
+                      + "\n".join(f"- {x}" for x in issues)
+                      + "\nCorrija esses pontos usando só as evidências fornecidas e emita o parecer completo de novo."}]
     parecer["_meta"] = {"model": model, "latency_s": round(time.time() - t0, 2),
-                        "prompt_tokens": resp.usage.prompt_tokens,
-                        "completion_tokens": resp.usage.completion_tokens}
+                        "prompt_tokens": tok_in, "completion_tokens": tok_out,
+                        "attempts": attempt, "first_pass_ok": not first_issues, "first_issues": first_issues}
     return parecer, payload
 
 

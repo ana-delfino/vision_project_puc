@@ -212,18 +212,22 @@ def eval_llm(n, models):
                              "n_recs": len(p["recomendacoes"]), **p["_meta"]})
             except Exception as e:
                 rows.append({"ok": False, "issues": [f"erro: {e}"], "risk_match": False, "n_recs": 0,
-                             "latency_s": None, "prompt_tokens": 0, "completion_tokens": 0})
+                             "latency_s": None, "prompt_tokens": 0, "completion_tokens": 0,
+                             "attempts": 0, "first_pass_ok": False, "first_issues": [f"erro: {e}"]})
         lat = [r["latency_s"] for r in rows if r["latency_s"]]
         summary[model] = {
             "n": len(rows),
+            "first_pass_rate": round(float(np.mean([r["first_pass_ok"] for r in rows])), 3),
             "validation_pass_rate": round(float(np.mean([r["ok"] for r in rows])), 3),
+            "retry_rate": round(float(np.mean([r["attempts"] > 1 for r in rows])), 3),
             "risk_level_agreement": round(float(np.mean([r["risk_match"] for r in rows])), 3),
             "latency_s_median": round(float(np.median(lat)), 2) if lat else None,
             "prompt_tokens_mean": round(float(np.mean([r["prompt_tokens"] for r in rows]))),
             "completion_tokens_mean": round(float(np.mean([r["completion_tokens"] for r in rows]))),
+            "first_issues": [i for r in rows for i in r["first_issues"]][:12],
             "issues": [i for r in rows for i in r["issues"]][:12],
         }
-        print(f"{model:<16} validação {summary[model]['validation_pass_rate']:.0%} · risco igual ao Agent 03 "
+        print(f"{model:<16} 1ª tentativa {summary[model]['first_pass_rate']:.0%} → final {summary[model]['validation_pass_rate']:.0%} · risco igual ao Agent 03 "
               f"{summary[model]['risk_level_agreement']:.0%} · latência {summary[model]['latency_s_median']}s · "
               f"tokens {summary[model]['prompt_tokens_mean']}+{summary[model]['completion_tokens_mean']}")
     out = C.ARTIFACTS / "agent04"

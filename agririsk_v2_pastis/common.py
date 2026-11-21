@@ -51,12 +51,18 @@ def phenology(ndvi_curve: np.ndarray) -> dict:
     O pico é procurado só na janela em que o pico do trigo pode ocorrer (jan-jul/2019), e os
     limites de meia-amplitude (início e fim do ciclo verde) só dentro do ciclo da safra. Sem isso,
     uma cultura de cobertura ou rebrota após a colheita (verde em set-out) podia ser tomada como
-    o pico do trigo, gerando "atrasos" de meses e vigor artificialmente baixo."""
+    o pico do trigo, gerando "atrasos" de meses e vigor artificialmente baixo. Se a suavização
+    deixar datas empatadas no máximo, o pico é o centro do platô (desempate pelo NDVI bruto)."""
     v = smooth(ndvi_curve)
     steps = np.arange(len(v))
     in_season = np.array([C.CROP_SEASON[0] <= d <= C.CROP_SEASON[1] for d in GRID_DATES])
     in_peak = np.array([C.CROP_PEAK_WINDOW[0] <= d <= C.CROP_PEAK_WINDOW[1] for d in GRID_DATES])
-    k = int(steps[in_peak][v[in_peak].argmax()])
+    # empate na curva suavizada (platô da mediana móvel): centro do platô; com número par de
+    # datas empatadas, das duas centrais fica a de maior NDVI bruto
+    raw = np.asarray(ndvi_curve, np.float32)
+    cand = steps[in_peak][np.isclose(v[in_peak], v[in_peak].max(), atol=1e-6)]
+    mid = cand[(len(cand) - 1) // 2: len(cand) // 2 + 1]
+    k = int(mid[raw[mid].argmax()])
     s0, s1 = int(steps[in_season][0]), int(steps[in_season][-1])
     lo = float(np.percentile(v[in_season], 10))
     half = lo + 0.5 * (v[k] - lo)
