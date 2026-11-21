@@ -50,19 +50,21 @@ sync_and_launch() {
     tar czf "$tmp/models.tgz" artifacts/payloads
     colab upload -s "$S" "$tmp/models.tgz" /content/agririsk_v2_models.tgz
     envf="$(cd .. && pwd)/.env"; [ -f .env ] && envf=.env
-    ( umask 077; grep -E '^API_KEY_GPT=' "$envf" > "$tmp/key.env" ) || { echo "API_KEY_GPT não encontrada em $envf"; rm -rf "$tmp"; exit 1; }
+    ( umask 077; sed -nE 's/^[[:space:]]*(export[[:space:]]+)?API_KEY_GPT[[:space:]]*=[[:space:]]*/API_KEY_GPT=/p' "$envf" > "$tmp/key.env" )
+    [ -s "$tmp/key.env" ] || { echo "API_KEY_GPT não encontrada em $envf"; rm -rf "$tmp"; exit 1; }
     colab upload -s "$S" "$tmp/key.env" /content/agririsk_v2_key.env >/dev/null
   fi
   rm -rf "$tmp"
   cexec <<PY
-import subprocess, tarfile, os
+import subprocess, tarfile, os, time
+# encerra o job anterior ANTES de instalar a chave: a limpeza dele (trap EXIT) apaga o .env
+subprocess.run("pkill -f colab_remote_", shell=True); time.sleep(2)
 os.makedirs("/content/agririsk_v2", exist_ok=True)
 tarfile.open("/content/agririsk_v2_code.tgz").extractall("/content/agririsk_v2", filter="data")
 if os.path.exists("/content/agririsk_v2_models.tgz") and ("${UPLOAD_MODELS:-1}" == "1" or "$JOB" == "llm"):
     tarfile.open("/content/agririsk_v2_models.tgz").extractall("/content/agririsk_v2", filter="data")
 if os.path.exists("/content/agririsk_v2_key.env"):   # chave: só para o job llm, apagada ao fim do job
     os.replace("/content/agririsk_v2_key.env", "/content/agririsk_v2/.env"); os.chmod("/content/agririsk_v2/.env", 0o600)
-subprocess.run("pkill -f colab_remote_", shell=True)
 log = open("/content/agririsk_v2/job.log", "w")
 env = {**os.environ, "PER_FOLD": "${PER_FOLD:-30}", "EPOCHS01": "${EPOCHS01:-80}", "EPOCHS02": "${EPOCHS02:-40}",
        "N_PAYLOADS": "${N_PAYLOADS:-60}", "CHECK_INDEX": "${CHECK_INDEX:-0}", "REDO": "${REDO:-}",

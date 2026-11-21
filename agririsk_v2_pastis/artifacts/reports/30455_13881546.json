@@ -256,41 +256,44 @@
   },
   {
    "agent": "agent04",
-   "seconds": 3.37
+   "seconds": 4.61
   }
  ],
  "agent04_output": {
-  "diagnostico": "A declaração de TRIGO DE INVERNO não foi confirmada pela série temporal Sentinel-2: o modelo indicou MILHO como cultura alternativa (p_declared=0.002; threshold_tau=0.07). A área declarada de 6.01 ha é compatível com o cadastro e foi sustentada pela imagem SPOT 6-7, sem indícios de extrapolação de área. Não há manchas relevantes de baixo vigor na parcela. Como a cultura declarada não foi confirmada, os indicadores regionais de trigo não devem ser usados para esta área.",
+  "diagnostico": "A declaração de trigo de inverno não foi confirmada pela série temporal Sentinel-2: o modelo temporal apontou milho como cultura alternativa, com p_declared=0.002 abaixo do limiar 0.07. A área declarada de 6.01 ha é suportada pela imagem SPOT 6-7 (2.0 m), sem inconsistência relevante no contorno. O sinal temporal é incompatível com trigo e indica ciclo atrasado/atípico para a cultura declarada; porém, como a cultura não foi confirmada, os percentis regionais de trigo não devem ser usados para interpretação agrícola desta parcela.",
   "nivel_risco": "alto",
-  "parecer_risco": "Risco alto devido à inconsistência da cultura declarada com a série temporal. O audit de área não aponta problema: declared_area_supported=true, 6.01 ha declarados e 6.01 ha no cadastro, com inconsistência de 1.33 abaixo do limiar de 29.28. O suporte da imagem também não mostra baixa heterogeneidade ou manchas de baixo vigor (0.0%).",
+  "parecer_risco": "Risco alto por contestação da cultura declarada. A evidência espectro-temporal é forte contra trigo de inverno e favorece milho. A auditoria de área não acusa problema material, portanto o risco principal está na declaração da cultura, não na área. Recomenda-se tratar como divergência relevante para crédito/seguro até validação de campo ou documental.",
   "recomendacoes": [
    {
-    "acao": "Realizar vistoria de campo para confirmar a cultura efetivamente implantada e registrar evidência fotográfica/georreferenciada.",
+    "acao": "Realizar vistoria de campo para confirmar a cultura efetivamente implantada e a data de estabelecimento da lavoura.",
     "prioridade": "alta",
     "evidencia_referenciada": "regional_fusion.declaration_check"
    },
    {
-    "acao": "Solicitar documentação de plantio/produção compatível com milho, pois a série temporal não confirmou trigo de inverno.",
+    "acao": "Solicitar documentação de suporte da safra (nota de semente, ordem de plantio, laudo agronômico ou histórico operacional) para reconciliar a divergência entre trigo declarado e milho observado.",
     "prioridade": "alta",
     "evidencia_referenciada": "satellite_timeseries.observed_crop"
    },
    {
-    "acao": "Manter o monitoramento remoto da parcela e confrontar a próxima safra com a cultura declarada antes de nova contratação ou renovação.",
-    "prioridade": "media",
-    "evidencia_referenciada": "satellite_timeseries.early_confirmation.confirmed_since"
+    "acao": "Revisar a elegibilidade do talhão para enquadramento como trigo de inverno na contratação atual, pois a confirmação temporal falhou e a alternativa do modelo foi milho.",
+    "prioridade": "alta",
+    "evidencia_referenciada": "regional_fusion.declaration_check.temporal_model_alternative"
    },
    {
-    "acao": "Manter a área atual como válida apenas para fins cadastrais, sem revisão por imagem de área, pois o polígono foi suportado pela SPOT e não houve indício de área a maior.",
+    "acao": "Manter apenas monitoramento de rotina da geometria/área, pois a área declarada de 6.01 ha está suportada pela imagem e sem indício de sobredeclaração.",
     "prioridade": "baixa",
-    "evidencia_referenciada": "regional_fusion.area_audit"
+    "evidencia_referenciada": "regional_fusion.area_audit.declared_area_supported"
    }
   ],
-  "limitacoes": "O indicador de vigor não foi validado contra produtividade nesta amostra. Os percentis regionais de trigo não são aplicáveis aqui porque a cultura declarada não foi confirmada. Flags de qualidade relevantes: declared_crop_not_confirmed e vigor_not_validated_against_yield.",
+  "limitacoes": "Flags de qualidade relevantes: declared_crop_not_confirmed e vigor_not_validated_against_yield. Além disso, regional_comparison.applicable=false, portanto os percentis de trigo e o atraso regional não devem ser usados para esta parcela, já que a cultura declarada não foi confirmada.",
   "_meta": {
    "model": "gpt-5.4-mini",
-   "latency_s": 3.37,
-   "prompt_tokens": 3788,
-   "completion_tokens": 502
+   "latency_s": 4.55,
+   "prompt_tokens": 3851,
+   "completion_tokens": 532,
+   "attempts": 1,
+   "first_pass_ok": true,
+   "first_issues": []
   }
  },
  "validation": {

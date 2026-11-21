@@ -247,7 +247,7 @@
   },
   {
    "agent": "agent02",
-   "seconds": 0.05
+   "seconds": 0.06
   },
   {
    "agent": "agent03",
@@ -255,41 +255,44 @@
   },
   {
    "agent": "agent04",
-   "seconds": 3.03
+   "seconds": 2.96
   }
  ],
  "agent04_output": {
-  "diagnostico": "A declaração de trigo de inverno foi confirmada pela série temporal Sentinel-2 (p=0.912) e está consistente com o benchmark regional; a cultura já estava confirmada desde 2019-02-08. A auditoria de área pela imagem SPOT 6-7 sustenta o polígono declarado: 3.82 ha declarados e 3.82 ha no cadastro, sem inconsistência relevante. No comportamento vegetativo, o talhão apresentou vigor alto para a região (NDVI integral no percentil 81.9 e pico de NDVI no percentil 92.1), com pico em 2019-04-29, 16 dias antes da mediana regional. Não há manchas de baixo vigor detectadas.",
+  "diagnostico": "Talhão com declaração de TRIGO DE INVERNO confirmada pela série temporal (p_declared=0.912; consistent=true), com confirmação desde 2019-02-08. A área também é sustentada pela imagem SPOT: área declarada 3.82 ha, cadastro 3.82 ha, e declared_area_supported=true. No benchmark regional, o desempenho foi bom para a safra: ndvi_integral=3.65 (percentil 81.9), peak_ndvi=0.902 (percentil 92.1), pico em 2019-04-29, 16 dias antes da mediana regional (2019-05-15). Não há manchas de baixo vigor na imagem (0.0%).",
   "nivel_risco": "baixo",
-  "parecer_risco": "Risco baixo. Não há indício de divergência de cultura nem de sobredeclaração de área; o talhão mostra desempenho vegetativo acima da maior parte dos trigos da região e ausência de heterogeneidade relevante na imagem.",
+  "parecer_risco": "O conjunto de evidências é consistente com trigo de inverno e não aponta divergência de cultura nem problema de área. O vigor é elevado no contexto regional e a heterogeneidade visual é nula. O risco operacional estimado é baixo.",
   "recomendacoes": [
    {
-    "acao": "Manter acompanhamento de rotina do talhão até a colheita, sem priorização de vistoria especial.",
+    "acao": "Manter o acompanhamento de rotina do talhão, sem priorização de vistoria extraordinária.",
     "prioridade": "baixa",
     "evidencia_referenciada": "regional_fusion.risk_level"
    },
    {
-    "acao": "Arquivar como cultura confirmada para o evento de safra, com validação desde 2019-02-08.",
+    "acao": "Arquivar a evidência de conformidade de cultura e área para suporte documental do crédito/seguro.",
     "prioridade": "baixa",
-    "evidencia_referenciada": "regional_fusion.declaration_check.confirmed_since"
+    "evidencia_referenciada": "regional_fusion.declaration_check"
    },
    {
-    "acao": "Usar a área declarada de 3.82 ha como suportada pela imagem para fins cadastrais e de análise.",
+    "acao": "Usar este talhão como referência interna de desempenho regional da safra, dado o vigor acima da mediana dos trigos da região.",
     "prioridade": "baixa",
-    "evidencia_referenciada": "regional_fusion.area_audit.declared_area_supported"
+    "evidencia_referenciada": "regional_fusion.regional_comparison"
    },
    {
-    "acao": "Acompanhar a próxima safra apenas para manter histórico comparativo de vigor, sem ação corretiva imediata.",
+    "acao": "Na próxima safra, repetir o monitoramento por sensoriamento remoto para confirmar se o padrão de vigor e timing se mantém.",
     "prioridade": "baixa",
-    "evidencia_referenciada": "regional_fusion.regional_comparison.ndvi_integral_percentile"
+    "evidencia_referenciada": "satellite_timeseries.early_confirmation.confirmed_since"
    }
   ],
-  "limitacoes": "Há uma bandeira de qualidade informando que o vigor ainda não foi validado contra produtividade ('vigor_not_validated_against_yield').",
+  "limitacoes": "Há uma flag de qualidade: vigor ainda não validado contra produtividade (vigor_not_validated_against_yield).",
   "_meta": {
    "model": "gpt-5.4-mini",
-   "latency_s": 3.03,
-   "prompt_tokens": 3795,
-   "completion_tokens": 464
+   "latency_s": 2.9,
+   "prompt_tokens": 3858,
+   "completion_tokens": 450,
+   "attempts": 1,
+   "first_pass_ok": true,
+   "first_issues": []
   }
  },
  "validation": {

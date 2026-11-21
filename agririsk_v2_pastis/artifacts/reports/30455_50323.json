@@ -86,8 +86,8 @@
   },
   "phenology": {
    "peak_ndvi": 0.706,
-   "peak_date": "2019-05-15",
-   "peak_step": 15,
+   "peak_date": "2019-05-31",
+   "peak_step": 16,
    "greenup_date": "2019-03-12",
    "senescence_date": "2019-07-02",
    "green_season_days": 112,
@@ -214,19 +214,19 @@
    "ndvi_integral_percentile": 1.6,
    "peak_ndvi": 0.706,
    "peak_ndvi_percentile": 0.0,
-   "peak_date": "2019-05-15",
+   "peak_date": "2019-05-31",
    "region_median_peak_date": "2019-05-15",
-   "peak_delay_days_vs_region": 0,
+   "peak_delay_days_vs_region": 16,
    "low_vigor_pct": 1.64,
    "low_vigor_percentile": 14.4
   },
-  "risk_score": 0.59,
+  "risk_score": 0.623,
   "risk_level": "high",
   "score_breakdown": {
    "declaration": 0.791,
    "area": 0.39,
    "vigor": 0.9,
-   "timing": 0.0,
+   "timing": 0.333,
    "heterogeneity": 0.1,
    "weights": {
     "declaration": 0.35,
@@ -243,11 +243,11 @@
  "trace": [
   {
    "agent": "agent01",
-   "seconds": 12.99
+   "seconds": 17.26
   },
   {
    "agent": "agent02",
-   "seconds": 0.76
+   "seconds": 0.93
   },
   {
    "agent": "agent03",
@@ -255,41 +255,44 @@
   },
   {
    "agent": "agent04",
-   "seconds": 4.03
+   "seconds": 6.72
   }
  ],
  "agent04_output": {
-  "diagnostico": "A declaração de TRIGO DE INVERNO não foi contestada pela regra temporal (consistent=true), porém o sinal é fraco: a série nunca atingiu 95% de confirmação (confirmed_since=null), e o modelo temporal apontou como alternativa principal \"cereal misto\" (p_declared_crop=0.188; top1 observado: 0.245). A área declarada está sustentada pela imagem SPOT: 2.5 ha declarados e 2.5 ha no cadastro, com declared_area_supported=true. No entanto, o desempenho vegetativo na comparação regional é muito baixo: NDVI integral em 2.49, no percentil 1.6, com pico NDVI de 0.706 no percentil 0.0, e isso eleva o risco consolidado para alto.",
+  "diagnostico": "Talhão 50323 (patch 30455, região t31tfm) com declaração de trigo de inverno não contestada pela série temporal (consistent=true), porém o sinal temporal é fraco: a probabilidade para a cultura declarada ficou em 0.188, abaixo da alternativa do modelo, cereal misto (0.245), e nunca atingiu confirmação com 95% de precisão (confirmed_since=null). A área declarada de 2.5 ha é sustentada pela imagem SPOT e pelo cadastro (declared_area_supported=true; inconsistency_score 22.81 abaixo do limiar 29.28). O comportamento vegetativo também é desfavorável no benchmark regional de trigo: vigor acumulado muito baixo (percentil 1.6), pico de NDVI abaixo de quase todo o grupo e pico 16 dias mais tardio que a mediana regional. O risco consolidado é alto.",
   "nivel_risco": "alto",
-  "parecer_risco": "Risco alto por combinação de confirmação cultural fraca na série temporal, vigor acumulado extremamente baixo frente aos trigos da região e heterogeneidade residual na parcela. A área não apresenta inconsistência suficiente para reprovação do polígono, mas o desempenho espectral sugere anomalia importante quando comparado ao benchmark regional (125 parcelas de trigo).",
+  "parecer_risco": "Risco alto por combinação de baixa evidência temporal para trigo, benchmark regional muito fraco de vigor e atraso fenológico em relação às parcelas de trigo da mesma região. A área não apresenta inconsistência relevante, então o principal alerta está na cultura/aptidão temporal e no desempenho vegetativo relativo. A presença de uma mancha pequena de baixo vigor não é o fator dominante, mas reforça a heterogeneidade.",
   "recomendacoes": [
    {
-    "acao": "Realizar vistoria de campo para validar a cultura efetivamente implantada e a condição do talhão, com foco em confirmar se há trigo de inverno ou cereal misto.",
+    "acao": "Realizar vistoria de campo para confirmar a cultura efetivamente implantada e confrontar a condição fenológica observada com a declaração de trigo de inverno.",
     "prioridade": "alta",
     "evidencia_referenciada": "regional_fusion.declaration_check"
    },
    {
-    "acao": "Solicitar documentação operacional/agrícola que comprove a semeadura e o manejo do ciclo, pois a série temporal não chegou a 95% de confirmação da cultura declarada.",
+    "acao": "Solicitar documentação complementar de implantação/operacionalização da lavoura para validar a troca entre trigo de inverno e a alternativa sugerida pelo modelo (cereal misto).",
     "prioridade": "alta",
-    "evidencia_referenciada": "satellite_timeseries.early_confirmation.confirmed_since"
+    "evidencia_referenciada": "regional_fusion.declaration_check.temporal_model_alternative"
    },
    {
-    "acao": "Exigir checagem técnica do baixo vigor observado, comparando a parcela com o benchmark regional, já que o NDVI integral ficou no percentil 1.6 e o pico NDVI no percentil 0.0 entre os trigos da região.",
+    "acao": "Reavaliar o caso com base no benchmark regional, pois o talhão está no percentil 1.6 de NDVI integral e com pico 16 dias após a mediana regional.",
     "prioridade": "alta",
-    "evidencia_referenciada": "regional_fusion.regional_comparison.ndvi_integral_percentile"
+    "evidencia_referenciada": "regional_fusion.regional_comparison"
    },
    {
-    "acao": "Manter monitoramento na próxima safra para avaliar repetição do padrão espectral e reduzir incerteza sobre a cultura, pois o sinal temporal foi consistente, mas fraco.",
+    "acao": "Manter monitoramento do talhão até a próxima safra ou próxima etapa fenológica para verificar se o padrão de baixo vigor se repete.",
     "prioridade": "media",
-    "evidencia_referenciada": "satellite_timeseries.early_confirmation.timeline"
+    "evidencia_referenciada": "regional_fusion.regional_comparison.low_vigor_pct"
    }
   ],
-  "limitacoes": "Há uma limitação de qualidade de dado informada pelo pipeline: vigor não validado contra produtividade (vigor_not_validated_against_yield). Além disso, embora a cultura declarada não tenha sido contestada, a confirmação nunca atingiu 95%, então a leitura de cultura é menos robusta do que em talhões com early confirmation completa.",
+  "limitacoes": "A única sinalização de qualidade explícita é vigor_not_validated_against_yield: o vigor observado ainda não foi validado contra produtividade. Não há limitação de auditabilidade de área; a parcela não foi cortada pela borda da imagem e a área foi suportada pela imagem e pelo cadastro.",
   "_meta": {
    "model": "gpt-5.4-mini",
-   "latency_s": 4.03,
+   "latency_s": 6.68,
    "prompt_tokens": 3850,
-   "completion_tokens": 605
+   "completion_tokens": 598,
+   "attempts": 1,
+   "first_pass_ok": true,
+   "first_issues": []
   }
  },
  "validation": {

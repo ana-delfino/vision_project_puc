@@ -233,49 +233,52 @@
   },
   {
    "agent": "agent02",
-   "seconds": 0.04
+   "seconds": 0.05
   },
   {
    "agent": "agent03",
-   "seconds": 0.0
+   "seconds": 0.001
   },
   {
    "agent": "agent04",
-   "seconds": 3.56
+   "seconds": 4.33
   }
  ],
  "agent04_output": {
-  "diagnostico": "A declaração de trigo de inverno não foi confirmada pela série temporal Sentinel-2; o modelo aponta milho como cultura alternativa mais provável (p_declared=0.004; top1 milho=0.727). A área declarada/cadastral é compatível em 1.04 ha, mas a auditoria de área não é auditável por ser parcela pequena demais para separar núcleo e faixa externa. Não há manchas de baixo vigor na imagem SPOT 6-7.",
+  "diagnostico": "A declaração de trigo de inverno não foi confirmada pela série temporal: o modelo aponta milho como cultura observada e alternativa temporal (p_declared=0.004 vs threshold_tau=0.07). A área declarada/cadastral é 1.04 ha, mas a auditoria de área ficou não auditável por parcela pequena demais para separar núcleo e faixa externa. O sinal temporal é incompatível com trigo, com confirmação negativa durante toda a safra; a cultura não chegou a ser confirmada com 95% de precisão (confirmed_since=null).",
   "nivel_risco": "alto",
-  "parecer_risco": "Risco alto, principalmente pela inconsistência entre a cultura declarada e a cultura observada pelo modelo temporal. A imagem de alta resolução não permite validar a área com segurança nesta parcela pequena, então a principal fragilidade está na declaração da cultura. Como a cultura declarada não foi confirmada, os indicadores regionais de trigo não devem ser usados para sustentar o enquadramento como trigo de inverno.",
+  "parecer_risco": "Risco alto por contestação da cultura declarada e por impossibilidade de validar a área via imagem. Como a declaração de trigo foi reprovada e a alternativa sugerida é milho, o caso exige verificação documental e vistoria dirigida. O benchmark regional de trigo não deve ser usado, pois a comparação regional não é aplicável quando a cultura não é confirmada.",
   "recomendacoes": [
    {
-    "acao": "Realizar vistoria de campo para confirmar a cultura implantada e registrar evidência fotográfica georreferenciada.",
+    "acao": "Solicitar ao produtor documentação comprobatória da cultura efetivamente implantada e da safra declarada, com foco em evidências de milho versus trigo de inverno.",
     "prioridade": "alta",
     "evidencia_referenciada": "regional_fusion.declaration_check"
    },
    {
-    "acao": "Solicitar documentação agronômica da lavoura (ex.: nota de semente, registro de manejo ou plantio) para confrontar a declaração de trigo de inverno.",
+    "acao": "Programar vistoria de campo para verificar cultura implantada e aderência do polígono/área declarados, dado que a auditoria de área é não auditável por tamanho da parcela.",
     "prioridade": "alta",
-    "evidencia_referenciada": "satellite_timeseries.declared_crop"
+    "evidencia_referenciada": "regional_fusion.area_audit"
    },
    {
-    "acao": "Tratar a área como não auditável para ajuste de perímetro/área nesta análise e, se necessário, refazer a verificação em parcela maior ou com outra cena de melhor separação espacial.",
+    "acao": "Revisar o cadastro geoespacial do talhão e o polígono declarado, pois a área declarada e a área de cadastro são 1.04 ha, mas a validação por anel externo não pôde ser feita.",
     "prioridade": "media",
-    "evidencia_referenciada": "field_delineation.area_audit.not_auditable_reason"
+    "evidencia_referenciada": "field_delineation.area_audit.declared_area_ha"
    },
    {
-    "acao": "Manter monitoramento remoto na próxima safra para checar consistência entre declaração, fenologia e cultura observada desde o início do ciclo.",
-    "prioridade": "media",
-    "evidencia_referenciada": "satellite_timeseries.early_confirmation.timeline"
+    "acao": "Manter monitoramento de rotina apenas para controle interno, sem usar os percentis regionais de trigo neste caso, porque a comparação regional não é aplicável quando a cultura não é trigo confirmada.",
+    "prioridade": "baixa",
+    "evidencia_referenciada": "regional_fusion.regional_comparison.applicable"
    }
   ],
-  "limitacoes": "A parcela é pequena demais para auditoria de área pelo método de núcleo/faixa externa. A cultura declarada não foi confirmada pelo modelo temporal. O vigor observado ainda não foi validado contra produtividade. Como a cultura não foi confirmada, os percentis e atrasos do benchmark regional de trigo não devem ser usados para esta parcela.",
+  "limitacoes": "Há flags de qualidade relevantes: declared_crop_not_confirmed, area_not_auditable_parcel_too_small_for_ring_core e vigor_not_validated_against_yield. A parcela é pequena demais para auditar a faixa externa do polígono, então a área não pôde ser validada por esse método. Os indicadores de vigor não devem ser interpretados como produtividade, pois ainda não foram validados contra rendimento.",
   "_meta": {
    "model": "gpt-5.4-mini",
-   "latency_s": 3.56,
-   "prompt_tokens": 3450,
-   "completion_tokens": 502
+   "latency_s": 4.3,
+   "prompt_tokens": 3513,
+   "completion_tokens": 566,
+   "attempts": 1,
+   "first_pass_ok": true,
+   "first_issues": []
   }
  },
  "validation": {

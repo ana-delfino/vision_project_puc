@@ -86,8 +86,8 @@
   },
   "phenology": {
    "peak_ndvi": 0.834,
-   "peak_date": "2019-03-28",
-   "peak_step": 12,
+   "peak_date": "2019-04-13",
+   "peak_step": 13,
    "greenup_date": "2019-02-24",
    "senescence_date": "2019-07-18",
    "green_season_days": 144,
@@ -198,19 +198,19 @@
    "ndvi_integral_percentile": 84.7,
    "peak_ndvi": 0.834,
    "peak_ndvi_percentile": 48.6,
-   "peak_date": "2019-03-28",
+   "peak_date": "2019-04-13",
    "region_median_peak_date": "2019-05-15",
-   "peak_delay_days_vs_region": -48,
+   "peak_delay_days_vs_region": -32,
    "low_vigor_pct": 18.47,
    "low_vigor_percentile": 97.7
   },
-  "risk_score": 0.218,
+  "risk_score": 0.185,
   "risk_level": "low",
   "score_breakdown": {
    "declaration": 0.038,
    "area": 0.0,
    "vigor": 0.1,
-   "timing": 1.0,
+   "timing": 0.667,
    "heterogeneity": 0.8,
    "weights": {
     "declaration": 0.35,
@@ -232,49 +232,52 @@
   },
   {
    "agent": "agent02",
-   "seconds": 0.04
+   "seconds": 0.05
   },
   {
    "agent": "agent03",
-   "seconds": 0.0
+   "seconds": 0.001
   },
   {
    "agent": "agent04",
-   "seconds": 3.96
+   "seconds": 3.63
   }
  ],
  "agent04_output": {
-  "diagnostico": "A declaração de TRIGO DE INVERNO foi confirmada pela série temporal Sentinel-2 (p=0.866), com confirmação desde 2019-02-08. A área declarada de 1.4 ha não pôde ser auditada pela imagem SPOT porque o talhão é pequeno demais para separar núcleo e faixa externa; o cadastro informa 1.08 ha. O comportamento vegetativo é compatível com trigo, com NDVI acumulado acima de 84.7% dos trigos da região, pico de NDVI de 0.834 em 2019-03-28 e ciclo adiantado em 48 dias frente à mediana regional. Há heterogeneidade elevada na imagem, com 18.47% da área em baixo vigor.",
+  "diagnostico": "Talhão 13362682 (patch 40025, região t32ulu) compatível com TRIGO DE INVERNO. A série temporal confirmou a cultura desde 2019-02-08, com probabilidade de 0.866 para a classe declarada. Na imagem SPOT 6-7 (2,0 m), a área declarada de 1,4 ha não pôde ser auditada por completo porque a parcela é pequena demais para separar núcleo e faixa externa. Em relação ao benchmark regional, o ciclo foi adiantado (-32 dias vs mediana regional) e o vigor acumulado ficou acima da maior parte dos trigos da região (percentil 84,7), embora exista heterogeneidade espacial relevante (18,47% de baixa vigor em 2 manchas).",
   "nivel_risco": "baixo",
-  "parecer_risco": "Risco global baixo. A cultura declarada está confirmada e o padrão fenológico é consistente com trigo de inverno. A principal ressalva é a área declarada não auditável pela limitação geométrica do talhão pequeno, além de heterogeneidade visual relevante (18.47% em baixo vigor), que recomenda checagem de campo, mas sem elevar o risco global.",
+  "parecer_risco": "Risco baixo. Não há contestação da cultura declarada e o sinal temporal é consistente com trigo de inverno. A principal ressalva é operacional: a área declarada não foi auditável pela limitação geométrica da parcela, então não é possível validar a sustentação integral do polígono/área declarados. Há também heterogeneidade interna, mas sem elevar o risco global.",
   "recomendacoes": [
    {
-    "acao": "Realizar vistoria de campo para validar o perímetro produtivo e esclarecer a diferença entre área declarada (1.4 ha) e cadastro (1.08 ha).",
-    "prioridade": "media",
+    "acao": "Manter enquadramento como trigo de inverno e seguir com monitoramento de rotina até a colheita.",
+    "prioridade": "baixa",
+    "evidencia_referenciada": "regional_fusion.declaration_check"
+   },
+   {
+    "acao": "Registrar que a área declarada de 1,4 ha não pôde ser auditada pela imagem, pois a parcela é pequena demais para separar núcleo e faixa externa; usar a área de cadastro de 1,08 ha como referência documental até nova vistoria.",
+    "prioridade": "baixa",
     "evidencia_referenciada": "field_delineation.area_audit"
    },
    {
-    "acao": "Solicitar documentação de suporte da área informada, pois a auditoria por imagem não foi conclusiva para o tamanho do talhão.",
-    "prioridade": "media",
+    "acao": "Se houver exigência operacional de conferência de área, solicitar documentação complementar ou vistoria de campo para validar o perímetro e a área efetiva, já que a checagem por sensoriamento remoto ficou inconclusiva.",
+    "prioridade": "baixa",
     "evidencia_referenciada": "regional_fusion.area_audit.not_auditable_reason"
    },
    {
-    "acao": "Manter monitoramento de rotina até o fechamento da safra, com atenção às manchas de baixo vigor e à heterogeneidade interna do talhão.",
+    "acao": "Acompanhar a heterogeneidade interna reportada na imagem, com 18,47% de baixa vigor em 2 manchas, para verificar se persiste até a próxima safra.",
     "prioridade": "baixa",
     "evidencia_referenciada": "field_delineation.low_vigor"
-   },
-   {
-    "acao": "Usar a comparação regional apenas como referência operacional de desempenho, já que o perfil fenológico foi confirmado como trigo e mostra avanço de 48 dias sobre a mediana regional.",
-    "prioridade": "baixa",
-    "evidencia_referenciada": "regional_fusion.regional_comparison"
    }
   ],
-  "limitacoes": "A área não pôde ser auditada por imagem porque o talhão é pequeno demais para separar núcleo e faixa externa. Há uma diferença entre área declarada e cadastro de 29.6%, mas ela não pode ser interpretada como erro de auditoria porque a área é não auditável. Flags relevantes: area_not_auditable_parcel_too_small_for_ring_core e vigor_not_validated_against_yield.",
+  "limitacoes": "Há duas limitações principais: a área não é auditável por ser uma parcela pequena demais para separar núcleo e faixa externa; e o indicador de vigor ainda não foi validado contra produtividade, então deve ser interpretado apenas como sinal de variabilidade espacial. Também não há confirmação de área sustentada pela imagem, apenas impossibilidade de auditar com robustez.",
   "_meta": {
    "model": "gpt-5.4-mini",
-   "latency_s": 3.96,
-   "prompt_tokens": 3461,
-   "completion_tokens": 578
+   "latency_s": 3.59,
+   "prompt_tokens": 3524,
+   "completion_tokens": 605,
+   "attempts": 1,
+   "first_pass_ok": true,
+   "first_issues": []
   }
  },
  "validation": {

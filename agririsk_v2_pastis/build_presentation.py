@@ -272,12 +272,10 @@ scen_rows = "".join(row(names[s], str(c["n"]), str(c["decl_flag"]), f'{c["area_f
                         f'{c["high"]} / {c["medium"]} / {c["low"]}') for s, c in
                     sorted(sc.items(), key=lambda kv: ["honesto", "cultura_falsa", "area_inflada"].index(kv[0])))
 
-llm_rows = "".join(row(f"<b>{k}</b>" if k == C.LLM_MODEL else k, pct(v["validation_pass_rate"]), pct(v["risk_level_agreement"]),
-                       f"{f(v['latency_s_median'], 1)} s", f"{v['prompt_tokens_mean']} + {v['completion_tokens_mean']}")
-                   for k, v in llm.items())
 n_llm = next(iter(llm.values()))["n"]
 _c = llm[C.LLM_MODEL]
-llm_row_chosen = row(f"<b>{C.LLM_MODEL}</b>", pct(_c["validation_pass_rate"]), pct(_c["risk_level_agreement"]),
+llm_row_chosen = row(f"<b>{C.LLM_MODEL}</b>", pct(_c.get("first_pass_rate", _c["validation_pass_rate"])),
+                     pct(_c["validation_pass_rate"]), pct(_c["risk_level_agreement"]),
                      f"{f(_c['latency_s_median'], 1)} s", f"{_c['prompt_tokens_mean']} + {_c['completion_tokens_mean']}")
 samp = {(s["model"], s["scenario"]): s for s in samples}
 
@@ -316,7 +314,7 @@ h1, h2 = m1["history"], m2["history"]
 # ---------------------------------------------------------------------------
 E2E = [
     ("10259_1147481", "Trigo honesto e saudável", "Declaração e área confirmadas; vigor no topo da região. É o caso mais comum e deve gerar risco baixo sem alarmes."),
-    ("30455_50323", "Trigo real com vigor muito baixo", "Trigo de verdade, mas fraco: pico de NDVI 0,72 e integral entre as menores da região. O modelo temporal fica em dúvida (o trigo ainda passa no limiar de declaração). O risco alto vem do vigor, não de fraude, e o parecer pede vistoria."),
+    ("30455_50323", "Trigo real com vigor muito baixo", "Trigo de verdade, mas fraco: pico de NDVI 0,71 e integral entre as menores da região. O modelo temporal fica em dúvida (o trigo ainda passa no limiar de declaração, mas nunca chega à confirmação). O risco alto vem do vigor, não de fraude, e o parecer pede vistoria."),
     ("40025_7275742", "Trigo com cobertura verde depois da colheita", "Depois da colheita (julho) a área ficou verde de novo em set-out. A fenologia procura o pico só na janela do ciclo do trigo; sem essa regra, o pico de outubro era tomado como o do trigo."),
     ("10270_1110439", "Área declarada 30% maior que a do cadastro", "Trigo de verdade, mas o polígono declarado invade o entorno. Detectado pela auditoria geométrica do Agent 02."),
     ("30455_13881546", "Milho declarado como trigo", "A cultura declarada não é confirmada pela série temporal; a comparação com os trigos da região deixa de se aplicar."),
@@ -410,8 +408,8 @@ subs = {
     "BENCH_N": str(m3["benchmark_parcels_per_region"]["ALL"]),
     "LOW_PCT": f(rc["ndvi_integral_percentile"], 1), "LOW_PEAK": f(rc["peak_ndvi"]), "LOW_PEAK_PCT": f(rc["peak_ndvi_percentile"], 1),
     "LOW_DELAY": str(rc["peak_delay_days_vs_region"]), "LOW_N_REG": str(rc["n_wheat_parcels_in_region_train"]),
-    "LLM_ROWS": llm_rows, "LLM_ROW_CHOSEN": llm_row_chosen, "LLM_N": str(n_llm), "LLM_MODEL": C.LLM_MODEL,
-    "S_4O": sample_text("gpt-4o-mini"), "S_41": sample_text("gpt-4.1-mini"), "S_54": sample_text("gpt-5.4-mini"),
+    "LLM_ROW_CHOSEN": llm_row_chosen, "LLM_N": str(n_llm), "LLM_MODEL": C.LLM_MODEL,
+    "S_54": html.escape(reports[PARCEL_INFL]["agent04_output"]["diagnostico"]),
     "INF_DECL": f(aai["declared_area_ha"]), "INF_REG": f(aai["registry_area_ha"]), "INF_SCORE": f(aai["inconsistency_score"], 1),
     "INF_TAU": f(aai["threshold_inconsistency"], 1), "INF_P": f(a3i["declaration_check"]["p_declared"], 3),
     "INF_CONF": dlabel(a3i["declaration_check"]["confirmed_since"]) if a3i["declaration_check"]["confirmed_since"] else "—",
@@ -419,13 +417,6 @@ subs = {
     "INF_DIAG": html.escape(a4i["diagnostico"]), "INF_RECS": recs_inf,
     "MIS_P": f(a3m["declaration_check"]["p_declared"], 3), "MIS_ALT": a3m["declaration_check"]["temporal_model_alternative"],
     "MIS_DIAG": html.escape(a4m["diagnostico"]),
-    # leitura humana dos três pareceres acima (artifacts/agent04/sample_pareceres.json)
-    "LLM_QUAL": ("<b>Análise de erros</b> (mesmo caso nas duas rodadas): o gpt-4o-mini lê 1,21% de manchas como "
-                 "“vigor baixo” (é pouco) e, numa rodada anterior, atribuiu à imagem a área do cadastro. O gpt-4.1-mini "
-                 "confunde imagem × cadastro nas duas rodadas e trata a pontuação de inconsistência como porcentagem. "
-                 "O gpt-5.4-mini separa declarado × cadastro e cita o percentil regional certo. As poucas falhas "
-                 "automáticas dos três são números calculados pelo próprio modelo (somas, diferenças) que não estão "
-                 "no payload. Custo da escolha: ~1,5× mais tokens de saída, com latência menor."),
 }
 out = Path(__file__).with_name("presentation_template.html").read_text()
 for k, v in subs.items():

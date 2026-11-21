@@ -86,8 +86,8 @@
   },
   "phenology": {
    "peak_ndvi": 0.816,
-   "peak_date": "2019-05-31",
-   "peak_step": 16,
+   "peak_date": "2019-06-16",
+   "peak_step": 17,
    "greenup_date": "2019-03-12",
    "senescence_date": "2019-07-18",
    "green_season_days": 128,
@@ -214,19 +214,19 @@
    "ndvi_integral_percentile": 64.8,
    "peak_ndvi": 0.816,
    "peak_ndvi_percentile": 38.4,
-   "peak_date": "2019-05-31",
+   "peak_date": "2019-06-16",
    "region_median_peak_date": "2019-05-15",
-   "peak_delay_days_vs_region": 16,
+   "peak_delay_days_vs_region": 32,
    "low_vigor_pct": 8.03,
    "low_vigor_percentile": 77.8
   },
-  "risk_score": 0.174,
+  "risk_score": 0.207,
   "risk_level": "low",
   "score_breakdown": {
    "declaration": 0.183,
    "area": 0.006,
    "vigor": 0.1,
-   "timing": 0.333,
+   "timing": 0.667,
    "heterogeneity": 0.5,
    "weights": {
     "declaration": 0.35,
@@ -247,49 +247,52 @@
   },
   {
    "agent": "agent02",
-   "seconds": 0.04
+   "seconds": 0.07
   },
   {
    "agent": "agent03",
-   "seconds": 0.0
+   "seconds": 0.001
   },
   {
    "agent": "agent04",
-   "seconds": 3.63
+   "seconds": 3.58
   }
  ],
  "agent04_output": {
-  "diagnostico": "Talhão compatível com trigo de inverno na série temporal, com confirmação desde 2019-03-12. A área declarada é sustentada pela imagem SPOT: 2.38 ha declarados e 2.38 ha no cadastro, sem inconsistência relevante de borda/área. No benchmark regional, o vigor acumulado ficou acima da mediana dos trigos da região (percentil 64.8), mas o pico de vigor foi abaixo da maior parte dos pares regionais (percentil 38.4) e ocorreu 16 dias após a mediana regional. Há 8.03% da área em manchas de baixo vigor, com heterogeneidade moderada.",
+  "diagnostico": "Talhão 7275742, região t32ulu, com cultura declarada de trigo de inverno confirmada pela série temporal (consistent=true; p_declared=0.735) e confirmação desde 2019-03-12. A área declarada de 2.38 ha é sustentada pela imagem SPOT 6-7 (2.0 m) e coincide com o cadastro (2.38 ha), sem indício de excesso de área. No benchmark regional de trigo (216 parcelas), o ciclo foi mais tardio que a mediana da região: pico em 2019-06-16, 32 dias após a mediana regional. O vigor acumulado ficou em faixa intermediária (ndvi_integral_percentile 64.8), mas o pico de NDVI foi abaixo da maior parte dos trigos da região (percentil 38.4).",
   "nivel_risco": "baixo",
-  "parecer_risco": "O risco é baixo porque a cultura declarada foi confirmada, a área está suportada pela imagem e o desvio regional observado não configura, isoladamente, sinal crítico. O principal ponto de atenção é o atraso fenológico relativo à região e a presença de manchas de baixo vigor, que justificam acompanhamento, mas não elevam o caso para risco médio/alto.",
+  "parecer_risco": "Risco global baixo. A declaração de trigo de inverno está consistente, a área está suportada e não há inconsistência relevante de polígono. O principal ponto de atenção é o atraso fenológico em relação à região (32 dias) e a presença de 8.03% da área com manchas de baixo vigor, embora o risco consolidado permaneça baixo.",
   "recomendacoes": [
    {
-    "acao": "Manter monitoramento de rotina do talhão até a próxima safra, com foco em evolução de vigor e fechamento da curva fenológica.",
+    "acao": "Manter acompanhamento de rotina do talhão, sem ação corretiva prioritária, dado o enquadramento de risco baixo.",
     "prioridade": "baixa",
     "evidencia_referenciada": "regional_fusion.risk_level"
    },
    {
-    "acao": "Registrar a confirmação da cultura como trigo de inverno a partir de 2019-03-12 para suporte do dossiê técnico.",
+    "acao": "Registrar em arquivo o atraso fenológico observado em relação à região, para referência na análise da safra.",
     "prioridade": "baixa",
-    "evidencia_referenciada": "regional_fusion.declaration_check.confirmed_since"
+    "evidencia_referenciada": "regional_fusion.regional_comparison.peak_delay_days_vs_region"
    },
    {
-    "acao": "Acompanhar em campo as 4 manchas de baixo vigor identificadas na imagem SPOT, priorizando a maior mancha de 0.074 ha.",
+    "acao": "Se houver vistoria de campo, conferir as 4 manchas de baixo vigor mapeadas e sua distribuição no talhão.",
     "prioridade": "baixa",
     "evidencia_referenciada": "field_delineation.low_vigor"
    },
    {
-    "acao": "Usar o benchmark regional apenas como referência de desempenho, pois há atraso de 16 dias no pico de NDVI em relação à mediana regional.",
+    "acao": "Usar a série temporal como evidência de confirmação da cultura desde 2019-03-12 em eventuais revisões cadastrais.",
     "prioridade": "baixa",
-    "evidencia_referenciada": "regional_fusion.regional_comparison.peak_delay_days_vs_region"
+    "evidencia_referenciada": "regional_fusion.declaration_check.confirmed_since"
    }
   ],
-  "limitacoes": "Há um aviso de qualidade: o vigor observado ainda não foi validado contra produtividade ('vigor_not_validated_against_yield').",
+  "limitacoes": "Há um flag de qualidade indicando que o vigor ainda não foi validado contra produtividade (vigor_not_validated_against_yield). As comparações regionais de vigor e timing são válidas porque a cultura foi confirmada como trigo de inverno.",
   "_meta": {
    "model": "gpt-5.4-mini",
-   "latency_s": 3.63,
-   "prompt_tokens": 3797,
-   "completion_tokens": 494
+   "latency_s": 3.54,
+   "prompt_tokens": 3860,
+   "completion_tokens": 539,
+   "attempts": 1,
+   "first_pass_ok": true,
+   "first_issues": []
   }
  },
  "validation": {

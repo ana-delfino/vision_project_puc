@@ -401,7 +401,7 @@ a{color:var(--green2);text-underline-offset:3px} a:hover{color:var(--accent)}
 <section class="slide">
   <div class="kicker">18 · Agent 03 · benchmark regional</div>
   <h2>A parcela comparada aos trigos da mesma região</h2>
-  <p>Referência: {{LOW_N_REG}} parcelas de trigo da mesma região nos folds de treino ({{BENCH_N}} no total). Da curva de NDVI suavizada (mediana móvel de 3 passos, que remove quedas isoladas por nuvem residual) saem a integral do NDVI na estação verde (entre as datas de meia-amplitude), o NDVI de pico e a data do pico. Cada indicador vira um <b>percentil dentro da região</b>.</p>
+  <p>Referência: {{LOW_N_REG}} parcelas de trigo da mesma região nos folds de treino ({{BENCH_N}} no total). Da curva de NDVI suavizada (mediana móvel de 3 passos, que remove quedas isoladas por nuvem residual) saem a integral do NDVI na estação verde (entre as datas de meia-amplitude), o NDVI de pico e a data do pico. O pico é procurado só entre jan e jul/2019, porque depois da colheita a área pode ficar verde de novo; se a suavização deixa datas empatadas, vale o centro do platô. A data tem a resolução da grade (16 dias). Cada indicador vira um <b>percentil dentro da região</b>.</p>
   <div class="chart">{{NDVI_CHART}}
     <div class="legend"><span><i style="background:#de6c00"></i>esta parcela</span><span><i style="background:#4f8fe6"></i>mediana da região</span><span><i style="background:#4f8fe6;opacity:.45"></i>faixa p25–p75</span><span><i style="background:#4f8fe6;opacity:.25"></i>faixa p10–p90</span></div>
   </div>
@@ -418,10 +418,13 @@ a{color:var(--green2);text-underline-offset:3px} a:hover{color:var(--accent)}
   <div class="grid">
     <div class="card"><span class="tagline">Saída estruturada</span><p class="small">JSON Schema estrito (diagnóstico, nível de risco, recomendações, limitações): o parecer é sempre um JSON válido.</p></div>
     <div class="card"><span class="tagline">Grounding por construção</span><p class="small">O campo "evidência" de cada recomendação é um <code>enum</code> com os caminhos que existem no JSON de entrada, montado a cada chamada.</p></div>
-    <div class="card"><span class="tagline">Validação pós-geração</span><p class="small">Risco igual ao do Agent 03; números presentes no payload; menção obrigatória a divergência de cultura ou área; prioridade coerente com o risco.</p></div>
+    <div class="card"><span class="tagline">Validação pós-geração</span><p class="small">Risco igual ao do Agent 03; números presentes no payload; menção obrigatória a divergência de cultura ou área; prioridade coerente com o risco; e checagens dos erros vistos na análise de erros (declaração consistente chamada de "não confirmada" ou "contestada", área não auditável comparada a um limiar, hesitação no texto, palavras em outro alfabeto).</p></div>
+    <div class="card"><span class="tagline">Nova tentativa</span><p class="small">Se a validação reprova, o parecer e a lista de problemas voltam ao modelo, que reemite o parecer completo (1 nova tentativa). O resultado da 1ª tentativa fica registrado para medir o ganho.</p></div>
+    <div class="card"><span class="tagline">Prompt</span><p class="small">Papel e público definidos, dicionário dos campos do JSON, regras para os casos ambíguos, uso só dos números fornecidos; evidências entre delimitadores <code>&lt;evidencias&gt;</code>.</p></div>
+    <div class="card"><span class="tagline">Execução</span><p class="small">Roda numa VM de CPU do Colab, como as demais etapas; a chave da API vai num arquivo temporário apagado ao fim do job.</p></div>
   </div>
   <div class="tablewrap"><table class="small">
-    <tr><th>Modelo</th><th>Pareceres aprovados na validação</th><th>Risco igual ao Agent 03</th><th>Latência (mediana)</th><th>Tokens (entrada + saída)</th></tr>
+    <tr><th>Modelo</th><th>Aprovados na 1ª tentativa</th><th>Aprovados ao final</th><th>Risco igual ao Agent 03</th><th>Latência (mediana)</th><th>Tokens (entrada + saída)</th></tr>
     {{LLM_ROW_CHOSEN}}
   </table></div>
   <div class="card" style="margin-top:18px"><span class="tagline">Exemplo · trigo com área declarada +30% · {{LLM_MODEL}}</span><p class="small">“{{S_54}}”</p></div>
@@ -439,7 +442,7 @@ a{color:var(--green2);text-underline-offset:3px} a:hover{color:var(--accent)}
     <div class="card"><h3>Instâncias fundidas</h3><p>Só {{A2_REC}} das parcelas são separadas: rótulo administrativo ≠ fronteira visível.</p></div>
     <div class="card"><h3>SPOT: data única e parcelas pequenas</h3><p>Bordas e manchas dependem do momento da cena. Parcelas de até ~1,5 ha não têm faixa externa e núcleo separáveis: 6 das 60 ficaram não auditáveis.</p></div>
     <div class="card"><h3>Vigor ≠ produtividade</h3><p>O PASTIS não tem dado de colheita; o percentil de vigor é descritivo e não foi validado contra rendimento.</p></div>
-    <div class="card"><h3>LLM</h3><p>Checagens automáticas pegam erros formais, não de raciocínio.</p></div>
+    <div class="card"><h3>LLM</h3><p>As checagens automáticas cobrem erros formais e os erros de leitura já vistos (padrões fixos). Um erro de raciocínio novo pode passar; os pareceres dos exemplos foram revisados à mão.</p></div>
   </div>
 </section>
 

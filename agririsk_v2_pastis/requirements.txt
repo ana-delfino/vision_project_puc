@@ -8,3 +8,5 @@ opencv-python-headless
 openai>=1.40
 python-dotenv
 langgraph>=1.0
+matplotlib
+pypdf

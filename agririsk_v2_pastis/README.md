@@ -6,7 +6,7 @@ sustentada pela imagem?) e **como** ele se compara aos trigos **da mesma região
 temporal Sentinel-2, a imagem SPOT de alta resolução e o polígono declarado **da mesma parcela**,
 e entrega um parecer rastreável para o analista de crédito ou seguro rural.
 
-- **Apresentação:** [docs/AgriRisk_MA_v2_apresentacao.html](docs/AgriRisk_MA_v2_apresentacao.html)
+- **Apresentação:** [PDF](docs/AgriRisk_MA_v2_apresentacao.pdf) · [HTML interativo](docs/AgriRisk_MA_v2_apresentacao.html) (o GitHub não renderiza HTML: baixe e abra no navegador)
 
 ## Arquitetura
 
@@ -20,7 +20,7 @@ START ─┬─> Agent 01 · U-TAE-lite (26 imagens Sentinel-2): o que e desde q
 | 01 · espaço-temporal | U-TAE-lite (0,56 M parâmetros): encoder por data + atenção temporal por pixel + decoder U-Net, treinado com **cortes temporais aleatórios** | Identificar a cultura é um problema temporal; um único modelo responde "dá para confirmar com o que se viu até a data D?" |
 | 02 · delimitação | U-Net + MobileNetV2 multitarefa (extensão cultivada + borda) + auditoria geométrica da área declarada | A alta resolução brilha em geometria: bordas, carreadores, áreas não cultivadas |
 | 03 · região e risco | Limiar de declaração com ≤ 3% de alarmes em trigos reais + percentis entre os trigos da mesma região (folds de treino) | Risco relativo aos vizinhos, com score decomposto por componente |
-| 04 · parecer | gpt-5.4-mini (escolhido entre 3) com structured outputs, evidência em `enum` e validação pós-geração | Escolha justificada por avaliação objetiva e análise de erros |
+| 04 · parecer | gpt-5.4-mini com structured outputs, evidência em `enum`, validação pós-geração e 1 nova tentativa se reprovar | Mesma qualidade do gpt-5.4 com ~1/3 da latência |
 
 ## Dados (fontes públicas, acessadas em 20/11/2026)
 
@@ -55,16 +55,17 @@ Todo limiar é escolhido na validação e reportado no teste.
 | Agent 02 · auditoria de área, com 5% de alarme falso na validação | detecta **86,5%** das áreas infladas em +30% e 66,9% das infladas em +15% (alarme falso no teste: 5,9%); a variante B (faixa externa − núcleo) foi escolhida na validação entre 3 |
 | Agent 03 · conferência da cultura declarada (limiar com ≤ 3% de alarmes na validação) | detecta **87,7%** das culturas falsas, com **2,5 alarmes** a cada 100 trigos reais |
 | Pipeline · 60 parcelas de teste em 3 cenários | cultura falsa: 12/12 com risco alto · área +30%: 10/12 detectadas (2 não auditáveis, sinalizadas) · honestas: 28 baixo, 3 médio, 5 alto |
-| Agent 04 · pareceres que passam na validação (60 parcelas) | gpt-5.4-mini **98%** · gpt-4o-mini 98% · gpt-4.1-mini 97%. A escolha do gpt-5.4-mini vem da análise de erros: os outros dois confundiram a área do cadastro com uma medida da imagem ou leram 1,2% de manchas como "vigor baixo" |
+| Agent 04 · pareceres que passam na validação (60 parcelas) | gpt-5.4-mini **100% na 1ª tentativa** (latência mediana 3,2 s) · gpt-5.4 100% (10 s). A validação inclui checagens dos erros de leitura vistos na análise de erros (declaração consistente chamada de "não confirmada", área não auditável comparada a um limiar) |
 
 Métricas completas em `artifacts/agent0*/metrics.json`, comparação das variantes da auditoria
 em `artifacts/agent02/audit_variants.json` e comparação dos LLMs em `artifacts/agent04/`.
 
 ## Como reproduzir
 
-Toda a computação pesada roda no **Google Colab** (google-colab-cli): treino em GPU T4 e o resto
-(inferência, avaliações, benchmark) numa VM só com CPU. Localmente ficam só o Agent 04 (chamada
-de API; a chave da OpenAI não sai da máquina) e a montagem da apresentação.
+Toda a execução roda no **Google Colab** (google-colab-cli): treino em GPU T4 e o resto
+(inferência, avaliações, benchmark e o Agent 04) em VMs só com CPU. Para o Agent 04, só a linha
+`API_KEY_GPT` do `.env` vai para a VM, num arquivo com permissão 600 apagado ao fim do job.
+Localmente fica só a montagem da apresentação.
 
 ```bash
 # ambiente local (a partir da raiz do repositório)
@@ -90,10 +91,14 @@ JOB=train ./run_on_colab.sh fetch && JOB=train ./run_on_colab.sh down
 JOB=eval ./run_on_colab.sh up            # HIGH_MEM=1 para máquina maior
 JOB=eval ./run_on_colab.sh fetch && JOB=eval ./run_on_colab.sh down
 
-# 3) local: parecer (chave API_KEY_GPT no .env da raiz) e apresentação
-python orchestrator.py --from-payloads --n 8
-python orchestrator.py --eval-llm --n 40 --models gpt-4o-mini gpt-4.1-mini gpt-5.4-mini
-python build_presentation.py   # export_presentation.py: pré-visualização em PNG (fora do repositório)
+# 3) Agent 04 na CPU do Colab (chave API_KEY_GPT no .env da raiz)
+JOB=llm LLM_TASK=reports PARCELS="30455_50323" ./run_on_colab.sh up    # relatórios ponta a ponta
+JOB=llm LLM_TASK=eval LLM_MODELS="gpt-5.4-mini gpt-5.4" ./run_on_colab.sh sync   # comparação de LLMs
+JOB=llm ./run_on_colab.sh fetch && JOB=llm ./run_on_colab.sh down
+
+# 4) local: apresentação
+python build_presentation.py && python export_presentation.py   # HTML → PDF (uma página por slide)
+python build_readme_figures.py # figuras do README da raiz → docs/figures/ (só lê dados e artefatos)
 ```
 
 ## Artefatos

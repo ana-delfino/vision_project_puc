@@ -18,8 +18,8 @@ case "${LLM_TASK:-reports}" in
     OUT="artifacts/agent04" ;;
   reports)
     echo "== Agent 04 · relatórios ponta a ponta"
-    rm -rf artifacts/reports
-    python -u orchestrator.py --from-payloads --n "${N_REPORTS:-8}"
+    rm -rf artifacts/reports; mkdir -p artifacts/reports
+    [ "${N_REPORTS:-8}" != "0" ] && python -u orchestrator.py --from-payloads --n "${N_REPORTS:-8}"
     [ -n "${PARCELS:-}" ] && python -u orchestrator.py --from-payloads --parcels ${PARCELS}
     OUT="artifacts/reports" ;;
 esac

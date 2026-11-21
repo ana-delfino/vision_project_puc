@@ -227,11 +227,22 @@ def validate(parecer: dict, payload: dict) -> Dict[str, Any]:
         issues.append("declaração divergente não mencionada no diagnóstico/parecer")
     # erros de raciocínio encontrados na análise de erros (números certos, leitura errada)
     dc, aa = f["declaration_check"], f["area_audit"]
-    if dc["consistent"] and re.search(r"(cultura|declara\w*|trigo)[^.]{0,40}n[ãa]o (foi |é |está )?confirmad", text, re.I):
-        issues.append("declaração consistente descrita como 'não confirmada'")
+    frase0 = r"(?:[^.]|\.\d)"   # mesmo período (o ponto decimal não encerra a frase)
+    if dc["consistent"] and (re.search(r"(cultura|declara\w*|trigo)[^.]{0,40}n[ãa]o (foi |é |está )?confirmad", text, re.I)
+                             or re.search(r"(?<!n[ãa]o )(?<!n[ãa]o foi )(?<!n[ãa]o é )contestad", text, re.I)):
+        issues.append("declaração consistente descrita como 'não confirmada' ou 'contestada'")
+    if "?" in text:
+        issues.append("parecer com pergunta ou hesitação (afirme só o que as evidências sustentam)")
+    if dc["consistent"] and re.search(rf"{dc['p_declared']}{frase0}{{0,30}}abaixo do limiar", text):
+        issues.append("probabilidade acima do limiar descrita como abaixo")
+    if re.search(r"[^\x00-\u024F\u2000-\u206F\u2190-\u22FF\u00B0-\u00BF]", text):
+        issues.append("texto com caracteres fora do alfabeto latino")
     if aa["declared_area_supported"] is None:
         # o limiar não vai no payload quando não há pontuação: citar "limiar" aqui é inventar a comparação
-        if re.search(r"(acima|abaixo|al[ée]m) do limiar|limiar de inconsist|threshold_inconsistency", text, re.I):
+        # (o limiar da declaração, ex. "abaixo do limiar 0.07", é outro e pode ser citado)
+        frase = r"(?:[^.]|\.\d)"   # mesmo período (o ponto decimal não encerra a frase)
+        if re.search(rf"limiar de inconsist|threshold_inconsistency|%{frase}{{0,40}}(acima|abaixo|al[ée]m) do limiar"
+                     rf"|(área|area|cadastro){frase}{{0,60}}(acima|abaixo|al[ée]m) do limiar", text, re.I):
             issues.append("área não auditável comparada com o limiar de inconsistência")
         if aa.get("not_auditable_reason") != "parcel_cut_by_image_edge" and re.search(r"borda da imagem|cortad[ao] pela borda", text, re.I) \
                 and not re.search(r"n[ãa]o (foi |está |é )?cortad", text, re.I):

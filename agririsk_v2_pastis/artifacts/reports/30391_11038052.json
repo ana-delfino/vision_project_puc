@@ -228,11 +228,11 @@
  "trace": [
   {
    "agent": "agent01",
-   "seconds": 12.92
+   "seconds": 17.73
   },
   {
    "agent": "agent02",
-   "seconds": 1.05
+   "seconds": 0.96
   },
   {
    "agent": "agent03",
@@ -240,41 +240,44 @@
   },
   {
    "agent": "agent04",
-   "seconds": 3.45
+   "seconds": 7.48
   }
  ],
  "agent04_output": {
-  "diagnostico": "A declaração de TRIGO DE INVERNO foi confirmada pela série temporal (p=0.836) e a cultura observada é compatível com trigo de inverno. A confirmação ocorreu em 2019-05-15. A área declarada de 1.0 ha é compatível com o cadastro de 1.0 ha, porém a auditoria de área não foi conclusiva porque a parcela é pequena demais para separar núcleo e faixa externa na imagem. O talhão apresenta 10.3% de manchas de baixo vigor, concentradas em 1 foco de 0.095 ha.",
+  "diagnostico": "Talhão 11038052 (patch 30391), na região t31tfm, com 1.0 ha declarado/cadastrado, é compatível com trigo de inverno. A série temporal confirma a cultura declarada com p_declared_crop=0.836 e confirmed_since em 2019-05-15. O desempenho fenológico é coerente com o benchmark regional: pico de NDVI em 2019-05-15, sem atraso em relação à mediana regional. A imagem SPOT mostra 10.3% da área com baixo vigor, concentrados em 1 mancha de 0.095 ha. A auditoria de área não pôde ser concluída porque a parcela é pequena demais para separar faixa externa e núcleo, portanto a área declarada não foi auditável.",
   "nivel_risco": "baixo",
-  "parecer_risco": "Risco global baixo (risk_score 0.1), sustentado pela confirmação da cultura, ausência de desvio de área auditável e sincronismo fenológico com a região (peak_date em 2019-05-15, sem atraso). O principal ponto de atenção é a heterogeneidade interna: baixo vigor em 10.3% da área, acima da maior parte dos trigos da região (percentil 80.0), embora sem evidência de risco alto para enquadramento da cultura.",
+  "parecer_risco": "Risco baixo. A declaração de trigo de inverno foi confirmada pela série temporal, sem divergência com a comparação regional. A área declarada coincide com o cadastro, mas a checagem geométrica ficou limitada pelo tamanho reduzido do talhão. Há heterogeneidade moderada na imagem, porém sem sinal suficiente para elevar o risco.",
   "recomendacoes": [
    {
-    "acao": "Manter acompanhamento de rotina da lavoura, sem elevação de prioridade operacional neste momento.",
+    "acao": "Manter monitoramento de rotina do talhão e registrar a evolução fenológica até a colheita.",
     "prioridade": "baixa",
     "evidencia_referenciada": "regional_fusion.risk_level"
    },
    {
-    "acao": "Registrar que a cultura foi confirmada como trigo de inverno a partir de 2019-05-15 para fins de análise de safra e crédito.",
+    "acao": "Programar vistoria de campo simples para checar a mancha de baixo vigor e confirmar se há efeito localizado no desenvolvimento.",
     "prioridade": "baixa",
-    "evidencia_referenciada": "regional_fusion.declaration_check.confirmed_since"
+    "evidencia_referenciada": "field_delineation.low_vigor.low_vigor_pct"
    },
    {
-    "acao": "Se necessário para a validação cadastral, solicitar apoio documental complementar, pois a área não pôde ser auditada de forma conclusiva pela limitação geométrica da parcela pequena.",
-    "prioridade": "media",
+    "acao": "Solicitar ou arquivar evidência cadastral complementar apenas para fins de conferência documental, já que a área não pôde ser auditada por limitação geométrica.",
+    "prioridade": "baixa",
     "evidencia_referenciada": "regional_fusion.area_audit.not_auditable_reason"
    },
    {
-    "acao": "Programar vistoria de campo apenas se houver dúvida comercial ou de seguro sobre a mancha de baixo vigor, que ocupa 10.3% da área e 0.095 ha no maior foco.",
+    "acao": "Usar este talhão como referência para a próxima safra, pois o padrão temporal observado foi compatível com trigo de inverno e sem atraso regional.",
     "prioridade": "baixa",
-    "evidencia_referenciada": "field_delineation.low_vigor.low_vigor_pct"
+    "evidencia_referenciada": "regional_fusion.declaration_check.confirmed_since"
    }
   ],
-  "limitacoes": "Há uma limitação de qualidade relevante: a área não é auditável porque a parcela é pequena demais para separar núcleo e faixa externa. Também consta a flag de que o vigor ainda não foi validado contra produtividade, então o baixo vigor observado não deve ser tratado sozinho como perda de rendimento.",
+  "limitacoes": "A auditoria de área não foi possível porque o talhão é pequeno demais para separar a faixa externa do núcleo (parcel_too_small_for_ring_core). O vigor observado pela imagem ainda não foi validado contra produtividade. A comparação regional de vigor é válida para trigo, mas não substitui vistoria de campo para explicar a mancha localizada.",
   "_meta": {
    "model": "gpt-5.4-mini",
-   "latency_s": 3.45,
-   "prompt_tokens": 3465,
-   "completion_tokens": 546
+   "latency_s": 7.45,
+   "prompt_tokens": 3528,
+   "completion_tokens": 549,
+   "attempts": 1,
+   "first_pass_ok": true,
+   "first_issues": []
   }
  },
  "validation": {
