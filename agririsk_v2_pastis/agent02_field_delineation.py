@@ -507,13 +507,15 @@ def run(patch: int, parcel: int, declared_area_ha: float | None = None, save_evi
     edge = bool(ys.min() == 0 or xs.min() == 0 or ys.max() == C.SPOT_PX - 1 or xs.max() == C.SPOT_PX - 1)
     f = audit_features(prob, decl_mask)
     supported = None if (f is None or edge) else bool(f["inconsistency_score"] <= c["tau"])
+    reason = "parcel_cut_by_image_edge" if edge else "parcel_too_small_for_ring_core" if f is None else None
     spots, spot_mask = low_vigor_spots(d["spot"], declared_mask(patch, parcel))
     out = {
         "patch": int(patch), "parcel_id": int(parcel),
         "area_audit": {"declared_area_ha": round(declared, 2), "registry_area_ha": round(rpg_ha, 2),
                        "declared_minus_registry_pct": round(100 * k, 1),
                        **(f or {}), "threshold_inconsistency": round(c["tau"], 2),
-                       "declared_area_supported": supported, "parcel_cut_by_image_edge": edge},
+                       "declared_area_supported": supported, "parcel_cut_by_image_edge": edge,
+                       "not_auditable_reason": reason},
         "low_vigor": spots, "image": {"sensor": "SPOT 6-7", "gsd_m": C.SPOT_GSD_M},
     }
     if save_evidence:

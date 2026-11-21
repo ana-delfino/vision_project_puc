@@ -89,9 +89,9 @@
    "peak_date": "2019-05-15",
    "peak_step": 15,
    "greenup_date": "2018-12-22",
-   "senescence_date": "2019-08-03",
-   "green_season_days": 224,
-   "ndvi_integral": 5.59
+   "senescence_date": "2019-07-18",
+   "green_season_days": 208,
+   "ndvi_integral": 5.46
   },
   "early_confirmation": {
    "target_precision": 0.95,
@@ -114,12 +114,12 @@
     {
      "date": "2019-05-15",
      "p": 0.831,
-     "threshold": 0.516
+     "threshold": 0.49
     },
     {
      "date": "2019-06-16",
      "p": 0.865,
-     "threshold": 0.606
+     "threshold": 0.49
     },
     {
      "date": "2019-07-18",
@@ -129,17 +129,17 @@
     {
      "date": "2019-08-19",
      "p": 0.873,
-     "threshold": 0.392
+     "threshold": 0.342
     },
     {
      "date": "2019-09-20",
      "p": 0.881,
-     "threshold": 0.371
+     "threshold": 0.342
     },
     {
      "date": "2019-10-22",
      "p": 0.879,
-     "threshold": 0.376
+     "threshold": 0.342
     }
    ],
    "confirmed_since": "2019-04-13"
@@ -163,7 +163,8 @@
    "inconsistency_score": 6.95,
    "threshold_inconsistency": 29.28,
    "declared_area_supported": true,
-   "parcel_cut_by_image_edge": false
+   "parcel_cut_by_image_edge": false,
+   "not_auditable_reason": null
   },
   "low_vigor": {
    "low_vigor_pct": 0.0,
@@ -203,12 +204,13 @@
    "inconsistency_score": 6.95,
    "threshold_inconsistency": 29.28,
    "declared_area_supported": true,
-   "parcel_cut_by_image_edge": false
+   "parcel_cut_by_image_edge": false,
+   "not_auditable_reason": null
   },
   "regional_comparison": {
    "applicable": true,
    "n_wheat_parcels_in_region_train": 150,
-   "ndvi_integral": 5.59,
+   "ndvi_integral": 5.46,
    "ndvi_integral_percentile": 98.7,
    "peak_ndvi": 0.905,
    "peak_ndvi_percentile": 59.3,
@@ -241,11 +243,11 @@
  "trace": [
   {
    "agent": "agent01",
-   "seconds": 13.39
+   "seconds": 12.71
   },
   {
    "agent": "agent02",
-   "seconds": 1.28
+   "seconds": 1.36
   },
   {
    "agent": "agent03",
@@ -253,36 +255,41 @@
   },
   {
    "agent": "agent04",
-   "seconds": 3.27
+   "seconds": 2.96
   }
  ],
  "agent04_output": {
-  "diagnostico": "A evidência sustenta a declaração de trigo de inverno no talhão 1147481 (patch 10259): a série temporal confirmou a cultura (p_declared=0.899) e a comparação regional também é compatível. A área declarada de 5.34 ha é suportada pela imagem SPOT 6-7 (2.0 m), sem corte pela borda. Não há indicação de área declarada maior que a sustentada pela imagem. O talhão apresentou vigor acumulado muito acima da maior parte dos trigos da região, com atraso fenológico moderado em relação ao benchmark regional.",
+  "diagnostico": "A cultura declarada (trigo de inverno) foi confirmada pela série temporal Sentinel-2, com confirmação desde 2019-04-13. A área declarada também é suportada pela imagem SPOT 6-7: 5.34 ha declarados e 5.34 ha no cadastro, sem indício de excesso de área. No benchmark regional, o talhão apresenta vigor acumulado muito acima da mediana dos trigos da região (percentil 98.7), pico de NDVI de 0.905 e atraso de 16 dias no pico em relação à mediana regional, sem manchas de baixo vigor na imagem.",
   "nivel_risco": "baixo",
-  "parecer_risco": "Risco global baixo. A confirmação da cultura e da área é consistente, e não há manchas de baixo vigor na imagem. O principal ponto de atenção é apenas o deslocamento do pico de NDVI 16 dias após a mediana regional, sem impacto suficiente para elevar o risco.",
+  "parecer_risco": "Baixo risco operacional e cadastral. A declaração de cultura foi validada, a área está consistente com o cadastro e não há evidência de heterogeneidade relevante na imagem. O único ponto de atenção é o deslocamento fenológico para mais tarde em relação à região, mas isso não eleva o risco no contexto geral.",
   "recomendacoes": [
    {
-    "acao": "Manter o acompanhamento de rotina do talhão, sem necessidade de intervenção prioritária.",
+    "acao": "Manter o caso em monitoramento de rotina, sem ação corretiva prioritária no momento.",
     "prioridade": "baixa",
     "evidencia_referenciada": "regional_fusion.risk_level"
    },
    {
-    "acao": "Registrar que a cultura declarada foi confirmada como trigo de inverno desde 2019-04-13 para fins de auditoria e subscrição.",
+    "acao": "Registrar a confirmação da cultura a partir de 2019-04-13 para apoio à análise documental e à regulação do sinistro/crédito, se necessário.",
     "prioridade": "baixa",
     "evidencia_referenciada": "regional_fusion.declaration_check.confirmed_since"
    },
    {
-    "acao": "Se houver visita de campo, priorizar checagem amostral padrão e não por alerta de anomalia, pois a área e o vigor estão sustentados pela imagem.",
+    "acao": "Usar este talhão como referência de comparação regional para trigo na mesma safra, dado o desempenho de NDVI integral no percentil 98.7 e ausência de baixo vigor.",
     "prioridade": "baixa",
-    "evidencia_referenciada": "regional_fusion.area_audit.declared_area_supported"
+    "evidencia_referenciada": "regional_fusion.regional_comparison.ndvi_integral_percentile"
+   },
+   {
+    "acao": "Acompanhar apenas a consistência do ciclo em futuras avaliações, pois o pico ocorreu 16 dias após a mediana regional.",
+    "prioridade": "baixa",
+    "evidencia_referenciada": "regional_fusion.regional_comparison.peak_delay_days_vs_region"
    }
   ],
-  "limitacoes": "Há uma flag de qualidade indicando que o vigor ainda não foi validado contra produtividade (data_quality_flags: vigor_not_validated_against_yield). Os percentis regionais de vigor e atraso são válidos porque a cultura foi confirmada como trigo de inverno.",
+  "limitacoes": "Há uma flag de qualidade indicando que o vigor ainda não foi validado contra produtividade ('vigor_not_validated_against_yield').",
   "_meta": {
    "model": "gpt-5.4-mini",
-   "latency_s": 3.27,
-   "prompt_tokens": 3693,
-   "completion_tokens": 427
+   "latency_s": 2.96,
+   "prompt_tokens": 3800,
+   "completion_tokens": 481
   }
  },
  "validation": {

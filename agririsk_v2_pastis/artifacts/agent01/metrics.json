@@ -56,12 +56,14 @@
  },
  "early_season": {
   "target_precision": 0.95,
-  "threshold": "por data (valida\u00e7\u00e3o)",
+  "threshold": "por data (valida\u00e7\u00e3o), monot\u00f4nico: nunca sobe ao longo da safra",
   "by_cutoff": [
    {
     "cutoff_step": 9,
     "date": "2019-02-08",
     "tau": 0.7104,
+    "tau_independent": 0.7104,
+    "val_precision": 0.9565,
     "wheat_f1": 0.6557,
     "wheat_auc": 0.9169,
     "confirmed_share_of_wheat": 0.1212,
@@ -71,6 +73,8 @@
     "cutoff_step": 11,
     "date": "2019-03-12",
     "tau": 0.6084,
+    "tau_independent": 0.6084,
+    "val_precision": 0.9531,
     "wheat_f1": 0.733,
     "wheat_auc": 0.943,
     "confirmed_share_of_wheat": 0.3586,
@@ -80,6 +84,8 @@
     "cutoff_step": 13,
     "date": "2019-04-13",
     "tau": 0.4905,
+    "tau_independent": 0.4905,
+    "val_precision": 0.9521,
     "wheat_f1": 0.8009,
     "wheat_auc": 0.9692,
     "confirmed_share_of_wheat": 0.7475,
@@ -88,25 +94,31 @@
    {
     "cutoff_step": 15,
     "date": "2019-05-15",
-    "tau": 0.5156,
+    "tau": 0.4905,
+    "tau_independent": 0.5156,
+    "val_precision": 0.9448,
     "wheat_f1": 0.8356,
     "wheat_auc": 0.9804,
-    "confirmed_share_of_wheat": 0.8384,
-    "precision_of_confirmed": 0.9379
+    "confirmed_share_of_wheat": 0.8485,
+    "precision_of_confirmed": 0.9032
    },
    {
     "cutoff_step": 17,
     "date": "2019-06-16",
-    "tau": 0.606,
+    "tau": 0.4905,
+    "tau_independent": 0.606,
+    "val_precision": 0.9394,
     "wheat_f1": 0.8696,
     "wheat_auc": 0.9835,
-    "confirmed_share_of_wheat": 0.7778,
-    "precision_of_confirmed": 0.9747
+    "confirmed_share_of_wheat": 0.8434,
+    "precision_of_confirmed": 0.9489
    },
    {
     "cutoff_step": 19,
     "date": "2019-07-18",
     "tau": 0.3416,
+    "tau_independent": 0.3416,
+    "val_precision": 0.9543,
     "wheat_f1": 0.9044,
     "wheat_auc": 0.9878,
     "confirmed_share_of_wheat": 0.8939,
@@ -115,29 +127,35 @@
    {
     "cutoff_step": 21,
     "date": "2019-08-19",
-    "tau": 0.3923,
+    "tau": 0.3416,
+    "tau_independent": 0.3923,
+    "val_precision": 0.9471,
     "wheat_f1": 0.8969,
     "wheat_auc": 0.9874,
-    "confirmed_share_of_wheat": 0.8737,
-    "precision_of_confirmed": 0.9558
+    "confirmed_share_of_wheat": 0.8939,
+    "precision_of_confirmed": 0.9516
    },
    {
     "cutoff_step": 23,
     "date": "2019-09-20",
-    "tau": 0.3706,
+    "tau": 0.3416,
+    "tau_independent": 0.3706,
+    "val_precision": 0.9422,
     "wheat_f1": 0.8997,
     "wheat_auc": 0.987,
-    "confirmed_share_of_wheat": 0.8788,
-    "precision_of_confirmed": 0.956
+    "confirmed_share_of_wheat": 0.8889,
+    "precision_of_confirmed": 0.9412
    },
    {
     "cutoff_step": 25,
     "date": "2019-10-22",
-    "tau": 0.3762,
+    "tau": 0.3416,
+    "tau_independent": 0.3762,
+    "val_precision": 0.9419,
     "wheat_f1": 0.8946,
     "wheat_auc": 0.9866,
-    "confirmed_share_of_wheat": 0.8788,
-    "precision_of_confirmed": 0.9508
+    "confirmed_share_of_wheat": 0.8838,
+    "precision_of_confirmed": 0.9409
    }
   ]
  },

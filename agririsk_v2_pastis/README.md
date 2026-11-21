@@ -6,9 +6,7 @@ sustentada pela imagem?) e **como** ele se compara aos trigos **da mesma região
 temporal Sentinel-2, a imagem SPOT de alta resolução e o polígono declarado **da mesma parcela**,
 e entrega um parecer rastreável para o analista de crédito ou seguro rural.
 
-- **Apresentação:** [docs/AgriRisk_MA_v2_apresentacao.html](docs/AgriRisk_MA_v2_apresentacao.html) ·
-  [PDF](docs/AgriRisk_MA_v2_apresentacao.pdf) · [PNG por slide](docs/slides/)
-- **Versão anterior (cana-de-açúcar):** pasta [`../v1/`](../v1/).
+- **Apresentação:** [docs/AgriRisk_MA_v2_apresentacao.html](docs/AgriRisk_MA_v2_apresentacao.html)
 
 ## Arquitetura
 
@@ -52,12 +50,12 @@ Todo limiar é escolhido na validação e reportado no teste.
 | Métrica | Valor |
 |---|---|
 | Agent 01 · trigo por parcela, safra completa: F1 / AUC | **0,892 / 0,987** (baseline Random Forest na curva média: 0,849 / 0,985) |
-| Agent 01 · confirmação antecipada (limiar por data, alvo de 95% de precisão na validação) | 13/abr: **75%** dos trigos confirmados (precisão de 90% no teste) · 15/mai: 84% (94%) |
+| Agent 01 · confirmação antecipada (limiar por data, alvo de 95% de precisão na validação, **monotônico**: nunca sobe ao longo da safra) | 13/abr: **75%** dos trigos confirmados (precisão de 90% no teste) · 15/mai: 85% (90%) · 16/jun: 84% (95%) |
 | Agent 02 · delimitação: IoU da extensão / F1 de borda (tolerância 4 m) | **0,871 / 0,760** |
 | Agent 02 · auditoria de área, com 5% de alarme falso na validação | detecta **86,5%** das áreas infladas em +30% e 66,9% das infladas em +15% (alarme falso no teste: 5,9%); a variante B (faixa externa − núcleo) foi escolhida na validação entre 3 |
 | Agent 03 · conferência da cultura declarada (limiar com ≤ 3% de alarmes na validação) | detecta **87,7%** das culturas falsas, com **2,5 alarmes** a cada 100 trigos reais |
 | Pipeline · 60 parcelas de teste em 3 cenários | cultura falsa: 12/12 com risco alto · área +30%: 10/12 detectadas (2 não auditáveis, sinalizadas) · honestas: 28 baixo, 3 médio, 5 alto |
-| Agent 04 · pareceres que passam na validação (60 parcelas) | gpt-5.4-mini **100%** · gpt-4o-mini 100% · gpt-4.1-mini 93%. A escolha do gpt-5.4-mini vem da análise de erros: os outros dois confundiram a área do cadastro com uma medida da imagem |
+| Agent 04 · pareceres que passam na validação (60 parcelas) | gpt-5.4-mini **98%** · gpt-4o-mini 98% · gpt-4.1-mini 97%. A escolha do gpt-5.4-mini vem da análise de erros: os outros dois confundiram a área do cadastro com uma medida da imagem ou leram 1,2% de manchas como "vigor baixo" |
 
 Métricas completas em `artifacts/agent0*/metrics.json`, comparação das variantes da auditoria
 em `artifacts/agent02/audit_variants.json` e comparação dos LLMs em `artifacts/agent04/`.
@@ -95,7 +93,7 @@ JOB=eval ./run_on_colab.sh fetch && JOB=eval ./run_on_colab.sh down
 # 3) local: parecer (chave API_KEY_GPT no .env da raiz) e apresentação
 python orchestrator.py --from-payloads --n 8
 python orchestrator.py --eval-llm --n 40 --models gpt-4o-mini gpt-4.1-mini gpt-5.4-mini
-python build_presentation.py && python export_presentation.py
+python build_presentation.py   # export_presentation.py: pré-visualização em PNG (fora do repositório)
 ```
 
 ## Artefatos
@@ -117,6 +115,8 @@ python build_presentation.py && python export_presentation.py
 - **Instâncias:** parcelas vizinhas sem borda visível se fundem, por isso a área não é medida por
   instância; a auditoria usa evidência geométrica (faixa externa × núcleo).
 - **SPOT:** uma única data por ano.
+- **Parcelas pequenas:** abaixo de ~1,5 ha a auditoria de área não separa a faixa externa do núcleo; a
+  parcela é marcada como não auditável, com o motivo (6 das 60 parcelas do teste ponta a ponta).
 
 ## Referências
 

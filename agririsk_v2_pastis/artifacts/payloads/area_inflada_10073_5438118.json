@@ -1,1 +1,258 @@
-{"patch": 10073, "parcel": 5438118, "scenario": "area_inflada", "true_crop_id": 2, "declared_area_ha": 5.24, "agent01_output": {"patch": 10073, "parcel_id": 5438118, "region": "t30uxv", "area_ha": 4.0, "declared_crop": "trigo de inverno", "p_declared_crop": 0.933, "observed_crop": "trigo de inverno", "top3": [{"crop": "trigo de inverno", "prob": 0.933}, {"crop": "triticale", "prob": 0.024}, {"crop": "milho", "prob": 0.014}], "ndvi_curve": {"dates": ["2018-09-17", "2018-10-03", "2018-10-19", "2018-11-04", "2018-11-20", "2018-12-06", "2018-12-22", "2019-01-07", "2019-01-23", "2019-02-08", "2019-02-24", "2019-03-12", "2019-03-28", "2019-04-13", "2019-04-29", "2019-05-15", "2019-05-31", "2019-06-16", "2019-07-02", "2019-07-18", "2019-08-03", "2019-08-19", "2019-09-04", "2019-09-20", "2019-10-06", "2019-10-22"], "values": [0.508, 0.422, 0.392, 0.238, 0.257, 0.181, 0.373, 0.473, 0.473, 0.51, 0.474, 0.508, 0.66, 0.886, 0.902, 0.933, 0.915, 0.894, 0.612, 0.36, 0.145, 0.115, 0.166, 0.203, 0.326, 0.326]}, "phenology": {"peak_ndvi": 0.915, "peak_date": "2019-05-15", "peak_step": 15, "greenup_date": "2019-03-12", "senescence_date": "2019-07-18", "green_season_days": 128, "ndvi_integral": 3.55}, "early_confirmation": {"target_precision": 0.95, "timeline": [{"date": "2019-02-08", "p": 0.228, "threshold": 0.71}, {"date": "2019-03-12", "p": 0.329, "threshold": 0.608}, {"date": "2019-04-13", "p": 0.673, "threshold": 0.49}, {"date": "2019-05-15", "p": 0.836, "threshold": 0.516}, {"date": "2019-06-16", "p": 0.866, "threshold": 0.606}, {"date": "2019-07-18", "p": 0.898, "threshold": 0.342}, {"date": "2019-08-19", "p": 0.905, "threshold": 0.392}, {"date": "2019-09-20", "p": 0.91, "threshold": 0.371}, {"date": "2019-10-22", "p": 0.906, "threshold": 0.376}], "confirmed_since": "2019-04-13"}, "model": "U-TAE-lite"}, "agent02_output": {"patch": 10073, "parcel_id": 5438118, "area_audit": {"declared_area_ha": 5.24, "registry_area_ha": 4.03, "declared_minus_registry_pct": 30.0, "interior_boundary_pct": 25.09, "non_field_pct": 11.0, "outer_ring_score": 119.59, "core_score": 10.84, "score_A": 36.09, "score_B": 108.75, "score_C": 119.59, "inconsistency_score": 108.75, "threshold_inconsistency": 29.28, "declared_area_supported": false, "parcel_cut_by_image_edge": false}, "low_vigor": {"low_vigor_pct": 0.0, "n_spots": 0, "largest_spot_ha": 0.0}, "image": {"sensor": "SPOT 6-7", "gsd_m": 2.0}, "evidence_png": "artifacts/agent02/evidence/10073_5438118_infl.png"}, "agent03_output": {"patch": 10073, "parcel_id": 5438118, "region": "t30uxv", "region_benchmark_used": "t30uxv", "declaration_check": {"declared_crop": "trigo de inverno", "p_declared": 0.933, "threshold_tau": 0.07, "consistent": true, "temporal_model_alternative": "trigo de inverno", "confirmed_since": "2019-04-13"}, "area_audit": {"declared_area_ha": 5.24, "registry_area_ha": 4.03, "declared_minus_registry_pct": 30.0, "interior_boundary_pct": 25.09, "non_field_pct": 11.0, "outer_ring_score": 119.59, "core_score": 10.84, "score_A": 36.09, "score_B": 108.75, "score_C": 119.59, "inconsistency_score": 108.75, "threshold_inconsistency": 29.28, "declared_area_supported": false, "parcel_cut_by_image_edge": false}, "regional_comparison": {"applicable": true, "n_wheat_parcels_in_region_train": 150, "ndvi_integral": 3.55, "ndvi_integral_percentile": 51.3, "peak_ndvi": 0.915, "peak_ndvi_percentile": 64.0, "peak_date": "2019-05-15", "region_median_peak_date": "2019-04-29", "peak_delay_days_vs_region": 16, "low_vigor_pct": 0.0, "low_vigor_percentile": 46.7}, "risk_score": 0.55, "risk_level": "high", "score_breakdown": {"declaration": 0.0, "area": 1.0, "vigor": 0.1, "timing": 0.333, "heterogeneity": 0.1, "weights": {"declaration": 0.35, "area": 0.2, "vigor": 0.25, "timing": 0.1, "heterogeneity": 0.1}}, "data_quality_flags": ["declared_area_not_supported_by_image", "vigor_not_validated_against_yield"]}, "trace": [{"agent": "agent01", "seconds": 0.0}, {"agent": "agent02", "seconds": 0.04}, {"agent": "agent03", "seconds": 0.0}]}
+{
+ "patch": 10073,
+ "parcel": 5438118,
+ "scenario": "area_inflada",
+ "true_crop_id": 2,
+ "declared_area_ha": 5.24,
+ "agent01_output": {
+  "patch": 10073,
+  "parcel_id": 5438118,
+  "region": "t30uxv",
+  "area_ha": 4.0,
+  "declared_crop": "trigo de inverno",
+  "p_declared_crop": 0.933,
+  "observed_crop": "trigo de inverno",
+  "top3": [
+   {
+    "crop": "trigo de inverno",
+    "prob": 0.933
+   },
+   {
+    "crop": "triticale",
+    "prob": 0.024
+   },
+   {
+    "crop": "milho",
+    "prob": 0.014
+   }
+  ],
+  "ndvi_curve": {
+   "dates": [
+    "2018-09-17",
+    "2018-10-03",
+    "2018-10-19",
+    "2018-11-04",
+    "2018-11-20",
+    "2018-12-06",
+    "2018-12-22",
+    "2019-01-07",
+    "2019-01-23",
+    "2019-02-08",
+    "2019-02-24",
+    "2019-03-12",
+    "2019-03-28",
+    "2019-04-13",
+    "2019-04-29",
+    "2019-05-15",
+    "2019-05-31",
+    "2019-06-16",
+    "2019-07-02",
+    "2019-07-18",
+    "2019-08-03",
+    "2019-08-19",
+    "2019-09-04",
+    "2019-09-20",
+    "2019-10-06",
+    "2019-10-22"
+   ],
+   "values": [
+    0.508,
+    0.422,
+    0.392,
+    0.238,
+    0.257,
+    0.181,
+    0.373,
+    0.473,
+    0.473,
+    0.51,
+    0.474,
+    0.508,
+    0.66,
+    0.886,
+    0.902,
+    0.933,
+    0.915,
+    0.894,
+    0.612,
+    0.36,
+    0.145,
+    0.115,
+    0.166,
+    0.203,
+    0.326,
+    0.326
+   ]
+  },
+  "phenology": {
+   "peak_ndvi": 0.915,
+   "peak_date": "2019-05-15",
+   "peak_step": 15,
+   "greenup_date": "2019-03-12",
+   "senescence_date": "2019-07-18",
+   "green_season_days": 128,
+   "ndvi_integral": 3.55
+  },
+  "early_confirmation": {
+   "target_precision": 0.95,
+   "timeline": [
+    {
+     "date": "2019-02-08",
+     "p": 0.228,
+     "threshold": 0.71
+    },
+    {
+     "date": "2019-03-12",
+     "p": 0.329,
+     "threshold": 0.608
+    },
+    {
+     "date": "2019-04-13",
+     "p": 0.673,
+     "threshold": 0.49
+    },
+    {
+     "date": "2019-05-15",
+     "p": 0.836,
+     "threshold": 0.49
+    },
+    {
+     "date": "2019-06-16",
+     "p": 0.866,
+     "threshold": 0.49
+    },
+    {
+     "date": "2019-07-18",
+     "p": 0.898,
+     "threshold": 0.342
+    },
+    {
+     "date": "2019-08-19",
+     "p": 0.905,
+     "threshold": 0.342
+    },
+    {
+     "date": "2019-09-20",
+     "p": 0.91,
+     "threshold": 0.342
+    },
+    {
+     "date": "2019-10-22",
+     "p": 0.906,
+     "threshold": 0.342
+    }
+   ],
+   "confirmed_since": "2019-04-13"
+  },
+  "model": "U-TAE-lite"
+ },
+ "agent02_output": {
+  "patch": 10073,
+  "parcel_id": 5438118,
+  "area_audit": {
+   "declared_area_ha": 5.24,
+   "registry_area_ha": 4.03,
+   "declared_minus_registry_pct": 30.0,
+   "interior_boundary_pct": 25.09,
+   "non_field_pct": 11.0,
+   "outer_ring_score": 119.59,
+   "core_score": 10.84,
+   "score_A": 36.09,
+   "score_B": 108.75,
+   "score_C": 119.59,
+   "inconsistency_score": 108.75,
+   "threshold_inconsistency": 29.28,
+   "declared_area_supported": false,
+   "parcel_cut_by_image_edge": false,
+   "not_auditable_reason": null
+  },
+  "low_vigor": {
+   "low_vigor_pct": 0.0,
+   "n_spots": 0,
+   "largest_spot_ha": 0.0
+  },
+  "image": {
+   "sensor": "SPOT 6-7",
+   "gsd_m": 2.0
+  },
+  "evidence_png": "artifacts/agent02/evidence/10073_5438118_infl.png"
+ },
+ "agent03_output": {
+  "patch": 10073,
+  "parcel_id": 5438118,
+  "region": "t30uxv",
+  "region_benchmark_used": "t30uxv",
+  "declaration_check": {
+   "declared_crop": "trigo de inverno",
+   "p_declared": 0.933,
+   "threshold_tau": 0.07,
+   "consistent": true,
+   "temporal_model_alternative": "trigo de inverno",
+   "confirmed_since": "2019-04-13"
+  },
+  "area_audit": {
+   "declared_area_ha": 5.24,
+   "registry_area_ha": 4.03,
+   "declared_minus_registry_pct": 30.0,
+   "interior_boundary_pct": 25.09,
+   "non_field_pct": 11.0,
+   "outer_ring_score": 119.59,
+   "core_score": 10.84,
+   "score_A": 36.09,
+   "score_B": 108.75,
+   "score_C": 119.59,
+   "inconsistency_score": 108.75,
+   "threshold_inconsistency": 29.28,
+   "declared_area_supported": false,
+   "parcel_cut_by_image_edge": false,
+   "not_auditable_reason": null
+  },
+  "regional_comparison": {
+   "applicable": true,
+   "n_wheat_parcels_in_region_train": 150,
+   "ndvi_integral": 3.55,
+   "ndvi_integral_percentile": 55.3,
+   "peak_ndvi": 0.915,
+   "peak_ndvi_percentile": 64.0,
+   "peak_date": "2019-05-15",
+   "region_median_peak_date": "2019-04-29",
+   "peak_delay_days_vs_region": 16,
+   "low_vigor_pct": 0.0,
+   "low_vigor_percentile": 46.7
+  },
+  "risk_score": 0.55,
+  "risk_level": "high",
+  "score_breakdown": {
+   "declaration": 0.0,
+   "area": 1.0,
+   "vigor": 0.1,
+   "timing": 0.333,
+   "heterogeneity": 0.1,
+   "weights": {
+    "declaration": 0.35,
+    "area": 0.2,
+    "vigor": 0.25,
+    "timing": 0.1,
+    "heterogeneity": 0.1
+   }
+  },
+  "data_quality_flags": [
+   "declared_area_not_supported_by_image",
+   "vigor_not_validated_against_yield"
+  ]
+ },
+ "trace": [
+  {
+   "agent": "agent01",
+   "seconds": 0.0
+  },
+  {
+   "agent": "agent02",
+   "seconds": 0.05
+  },
+  {
+   "agent": "agent03",
+   "seconds": 0.001
+  }
+ ]
+}

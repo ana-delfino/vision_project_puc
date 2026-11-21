@@ -89,9 +89,9 @@
    "peak_date": "2019-07-18",
    "peak_step": 19,
    "greenup_date": "2019-05-31",
-   "senescence_date": "2019-09-20",
-   "green_season_days": 112,
-   "ndvi_integral": 3.09
+   "senescence_date": "2019-08-03",
+   "green_season_days": 64,
+   "ndvi_integral": 1.97
   },
   "early_confirmation": {
    "target_precision": 0.95,
@@ -114,12 +114,12 @@
     {
      "date": "2019-05-15",
      "p": 0.02,
-     "threshold": 0.516
+     "threshold": 0.49
     },
     {
      "date": "2019-06-16",
      "p": 0.004,
-     "threshold": 0.606
+     "threshold": 0.49
     },
     {
      "date": "2019-07-18",
@@ -129,17 +129,17 @@
     {
      "date": "2019-08-19",
      "p": 0.004,
-     "threshold": 0.392
+     "threshold": 0.342
     },
     {
      "date": "2019-09-20",
      "p": 0.004,
-     "threshold": 0.371
+     "threshold": 0.342
     },
     {
      "date": "2019-10-22",
      "p": 0.004,
-     "threshold": 0.376
+     "threshold": 0.342
     }
    ],
    "confirmed_since": null
@@ -155,7 +155,8 @@
    "declared_minus_registry_pct": 0.0,
    "threshold_inconsistency": 29.28,
    "declared_area_supported": null,
-   "parcel_cut_by_image_edge": false
+   "parcel_cut_by_image_edge": false,
+   "not_auditable_reason": "parcel_too_small_for_ring_core"
   },
   "low_vigor": {
    "low_vigor_pct": 0.0,
@@ -187,15 +188,16 @@
    "declared_minus_registry_pct": 0.0,
    "threshold_inconsistency": 29.28,
    "declared_area_supported": null,
-   "parcel_cut_by_image_edge": false
+   "parcel_cut_by_image_edge": false,
+   "not_auditable_reason": "parcel_too_small_for_ring_core"
   },
   "regional_comparison": {
    "applicable": false,
    "n_wheat_parcels_in_region_train": 216,
-   "ndvi_integral": 3.09,
-   "ndvi_integral_percentile": 39.8,
+   "ndvi_integral": 1.97,
+   "ndvi_integral_percentile": 0.0,
    "peak_ndvi": 0.876,
-   "peak_ndvi_percentile": 75.9,
+   "peak_ndvi_percentile": 79.6,
    "peak_date": "2019-07-18",
    "region_median_peak_date": "2019-05-15",
    "peak_delay_days_vs_region": 64,
@@ -220,7 +222,7 @@
   },
   "data_quality_flags": [
    "declared_crop_not_confirmed",
-   "area_not_auditable_parcel_cut_by_image_edge",
+   "area_not_auditable_parcel_too_small_for_ring_core",
    "vigor_not_validated_against_yield"
   ]
  },
@@ -239,41 +241,41 @@
   },
   {
    "agent": "agent04",
-   "seconds": 3.2
+   "seconds": 3.56
   }
  ],
  "agent04_output": {
-  "diagnostico": "A declaração de TRIGO DE INVERNO não foi confirmada pela série temporal Sentinel-2: o modelo aponta MILHO como cultura mais provável (p_declared=0.004; limiar tau=0.07). A auditoria de área não é conclusiva porque o talhão não ficou auditável por corte na borda da imagem, embora a área cadastrada e a declarada coincidam em 1.04 ha. A comparação regional com trigo não deve ser usada aqui, pois a cultura declarada não foi confirmada. O risco final é alto.",
+  "diagnostico": "A declaração de trigo de inverno não foi confirmada pela série temporal Sentinel-2; o modelo aponta milho como cultura alternativa mais provável (p_declared=0.004; top1 milho=0.727). A área declarada/cadastral é compatível em 1.04 ha, mas a auditoria de área não é auditável por ser parcela pequena demais para separar núcleo e faixa externa. Não há manchas de baixo vigor na imagem SPOT 6-7.",
   "nivel_risco": "alto",
-  "parecer_risco": "Risco alto, puxado principalmente pela não confirmação da cultura declarada e pela inconsistência entre a declaração e o padrão temporal observado. Não há suporte para validar trigo de inverno neste talhão com as evidências fornecidas.",
+  "parecer_risco": "Risco alto, principalmente pela inconsistência entre a cultura declarada e a cultura observada pelo modelo temporal. A imagem de alta resolução não permite validar a área com segurança nesta parcela pequena, então a principal fragilidade está na declaração da cultura. Como a cultura declarada não foi confirmada, os indicadores regionais de trigo não devem ser usados para sustentar o enquadramento como trigo de inverno.",
   "recomendacoes": [
    {
-    "acao": "Realizar vistoria de campo para confirmar a cultura efetivamente implantada no talhão e confrontar com a declaração de trigo de inverno.",
+    "acao": "Realizar vistoria de campo para confirmar a cultura implantada e registrar evidência fotográfica georreferenciada.",
     "prioridade": "alta",
-    "evidencia_referenciada": "regional_fusion.declaration_check.consistent"
+    "evidencia_referenciada": "regional_fusion.declaration_check"
    },
    {
-    "acao": "Solicitar documentação comprobatória da cultura informada e do manejo da área, dada a forte divergência entre a declaração e o modelo temporal.",
+    "acao": "Solicitar documentação agronômica da lavoura (ex.: nota de semente, registro de manejo ou plantio) para confrontar a declaração de trigo de inverno.",
     "prioridade": "alta",
-    "evidencia_referenciada": "satellite_timeseries.observed_crop"
+    "evidencia_referenciada": "satellite_timeseries.declared_crop"
    },
    {
-    "acao": "Revisar a geometria do polígono e a cobertura da imagem, pois a área não foi auditável por corte na borda da imagem; confirmar a área em cadastro de 1.04 ha antes de qualquer decisão.",
+    "acao": "Tratar a área como não auditável para ajuste de perímetro/área nesta análise e, se necessário, refazer a verificação em parcela maior ou com outra cena de melhor separação espacial.",
     "prioridade": "media",
-    "evidencia_referenciada": "regional_fusion.area_audit.declared_area_supported"
+    "evidencia_referenciada": "field_delineation.area_audit.not_auditable_reason"
    },
    {
-    "acao": "Manter monitoramento remoto apenas como apoio à confirmação de cultura nesta safra; não usar os percentis regionais de trigo para inferir vigor ou atraso, porque a comparação não é aplicável.",
+    "acao": "Manter monitoramento remoto na próxima safra para checar consistência entre declaração, fenologia e cultura observada desde o início do ciclo.",
     "prioridade": "media",
-    "evidencia_referenciada": "regional_fusion.regional_comparison.applicable"
+    "evidencia_referenciada": "satellite_timeseries.early_confirmation.timeline"
    }
   ],
-  "limitacoes": "Há flags de qualidade relevantes: a cultura declarada não foi confirmada; a área não foi auditável porque o talhão foi cortado pela borda da imagem; e o vigor não foi validado contra produtividade. Como a cultura declarada não foi confirmada, os percentis regionais de trigo não são aplicáveis a este caso.",
+  "limitacoes": "A parcela é pequena demais para auditoria de área pelo método de núcleo/faixa externa. A cultura declarada não foi confirmada pelo modelo temporal. O vigor observado ainda não foi validado contra produtividade. Como a cultura não foi confirmada, os percentis e atrasos do benchmark regional de trigo não devem ser usados para esta parcela.",
   "_meta": {
    "model": "gpt-5.4-mini",
-   "latency_s": 3.19,
-   "prompt_tokens": 3372,
-   "completion_tokens": 503
+   "latency_s": 3.56,
+   "prompt_tokens": 3450,
+   "completion_tokens": 502
   }
  },
  "validation": {

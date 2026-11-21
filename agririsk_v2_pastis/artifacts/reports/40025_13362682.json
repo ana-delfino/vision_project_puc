@@ -114,12 +114,12 @@
     {
      "date": "2019-05-15",
      "p": 0.874,
-     "threshold": 0.516
+     "threshold": 0.49
     },
     {
      "date": "2019-06-16",
      "p": 0.876,
-     "threshold": 0.606
+     "threshold": 0.49
     },
     {
      "date": "2019-07-18",
@@ -129,17 +129,17 @@
     {
      "date": "2019-08-19",
      "p": 0.779,
-     "threshold": 0.392
+     "threshold": 0.342
     },
     {
      "date": "2019-09-20",
      "p": 0.773,
-     "threshold": 0.371
+     "threshold": 0.342
     },
     {
      "date": "2019-10-22",
      "p": 0.767,
-     "threshold": 0.376
+     "threshold": 0.342
     }
    ],
    "confirmed_since": "2019-02-08"
@@ -155,7 +155,8 @@
    "declared_minus_registry_pct": 29.6,
    "threshold_inconsistency": 29.28,
    "declared_area_supported": null,
-   "parcel_cut_by_image_edge": false
+   "parcel_cut_by_image_edge": false,
+   "not_auditable_reason": "parcel_too_small_for_ring_core"
   },
   "low_vigor": {
    "low_vigor_pct": 18.47,
@@ -187,7 +188,8 @@
    "declared_minus_registry_pct": 29.6,
    "threshold_inconsistency": 29.28,
    "declared_area_supported": null,
-   "parcel_cut_by_image_edge": false
+   "parcel_cut_by_image_edge": false,
+   "not_auditable_reason": "parcel_too_small_for_ring_core"
   },
   "regional_comparison": {
    "applicable": true,
@@ -195,7 +197,7 @@
    "ndvi_integral": 3.71,
    "ndvi_integral_percentile": 84.7,
    "peak_ndvi": 0.834,
-   "peak_ndvi_percentile": 46.8,
+   "peak_ndvi_percentile": 48.6,
    "peak_date": "2019-03-28",
    "region_median_peak_date": "2019-05-15",
    "peak_delay_days_vs_region": -48,
@@ -219,7 +221,7 @@
    }
   },
   "data_quality_flags": [
-   "area_not_auditable_parcel_cut_by_image_edge",
+   "area_not_auditable_parcel_too_small_for_ring_core",
    "vigor_not_validated_against_yield"
   ]
  },
@@ -238,41 +240,41 @@
   },
   {
    "agent": "agent04",
-   "seconds": 3.97
+   "seconds": 3.96
   }
  ],
  "agent04_output": {
-  "diagnostico": "A série temporal confirma a cultura declarada como trigo de inverno (p_declared=0.866), com confirmação desde 2019-02-08. A área não pôde ser validada pela imagem: a área declarada é 1.4 ha, a área cadastral 1.08 ha, com divergência de 29.6%, acima do limiar de 29.28%, porém o audit foi marcado como não auditável (`declared_area_supported=null`). No benchmark regional de trigo, o talhão apresenta vigor acumulado acima da mediana (percentil 84.7), pico de NDVI mediano/compatível (percentil 46.8), pico de NDVI em 2019-03-28, 48 dias antes da mediana regional, e 18.47% da área em baixo vigor, valor elevado frente à região (percentil 97.7).",
+  "diagnostico": "A declaração de TRIGO DE INVERNO foi confirmada pela série temporal Sentinel-2 (p=0.866), com confirmação desde 2019-02-08. A área declarada de 1.4 ha não pôde ser auditada pela imagem SPOT porque o talhão é pequeno demais para separar núcleo e faixa externa; o cadastro informa 1.08 ha. O comportamento vegetativo é compatível com trigo, com NDVI acumulado acima de 84.7% dos trigos da região, pico de NDVI de 0.834 em 2019-03-28 e ciclo adiantado em 48 dias frente à mediana regional. Há heterogeneidade elevada na imagem, com 18.47% da área em baixo vigor.",
   "nivel_risco": "baixo",
-  "parecer_risco": "O risco global é baixo (risk_score=0.218), sustentado pela confirmação da cultura e pela boa performance temporal do trigo. O principal ponto de atenção é a inconsistência de área declarada versus cadastro, mas ela não pôde ser auditada de forma conclusiva pela limitação da imagem. Também há heterogeneidade interna relevante, com 18.47% de manchas de baixo vigor, embora isso não tenha elevado o risco final.",
+  "parecer_risco": "Risco global baixo. A cultura declarada está confirmada e o padrão fenológico é consistente com trigo de inverno. A principal ressalva é a área declarada não auditável pela limitação geométrica do talhão pequeno, além de heterogeneidade visual relevante (18.47% em baixo vigor), que recomenda checagem de campo, mas sem elevar o risco global.",
   "recomendacoes": [
    {
-    "acao": "Manter a classificação como trigo de inverno no processo de análise, usando a confirmação desde 2019-02-08 como base documental do enquadramento da cultura.",
-    "prioridade": "baixa",
-    "evidencia_referenciada": "regional_fusion.declaration_check.confirmed_since"
-   },
-   {
-    "acao": "Solicitar conferência documental da área declarada, pois a área informada é 1.4 ha e a área cadastral 1.08 ha, com divergência de 29.6% acima do limiar de 29.28%.",
+    "acao": "Realizar vistoria de campo para validar o perímetro produtivo e esclarecer a diferença entre área declarada (1.4 ha) e cadastro (1.08 ha).",
     "prioridade": "media",
-    "evidencia_referenciada": "regional_fusion.area_audit.declared_area_ha"
+    "evidencia_referenciada": "field_delineation.area_audit"
    },
    {
-    "acao": "Programar vistoria de campo pontual para checar as 2 manchas de baixo vigor, especialmente a maior com 0.164 ha, devido ao percentual de baixo vigor de 18.47%.",
+    "acao": "Solicitar documentação de suporte da área informada, pois a auditoria por imagem não foi conclusiva para o tamanho do talhão.",
     "prioridade": "media",
-    "evidencia_referenciada": "field_delineation.low_vigor.low_vigor_pct"
+    "evidencia_referenciada": "regional_fusion.area_audit.not_auditable_reason"
    },
    {
-    "acao": "Fazer monitoramento de rotina desta área na próxima safra, sem escalonamento imediato de prioridade alta, porque o risco consolidado é baixo e a cultura está confirmada.",
+    "acao": "Manter monitoramento de rotina até o fechamento da safra, com atenção às manchas de baixo vigor e à heterogeneidade interna do talhão.",
     "prioridade": "baixa",
-    "evidencia_referenciada": "regional_fusion.risk_level"
+    "evidencia_referenciada": "field_delineation.low_vigor"
+   },
+   {
+    "acao": "Usar a comparação regional apenas como referência operacional de desempenho, já que o perfil fenológico foi confirmado como trigo e mostra avanço de 48 dias sobre a mediana regional.",
+    "prioridade": "baixa",
+    "evidencia_referenciada": "regional_fusion.regional_comparison"
    }
   ],
-  "limitacoes": "Há limitação de qualidade de dados porque a área não foi auditável de forma conclusiva na imagem (`area_not_auditable_parcel_cut_by_image_edge`), embora `parcel_cut_by_image_edge=false` no audit. Além disso, o vigor observado ainda não foi validado contra produtividade (`vigor_not_validated_against_yield`).",
+  "limitacoes": "A área não pôde ser auditada por imagem porque o talhão é pequeno demais para separar núcleo e faixa externa. Há uma diferença entre área declarada e cadastro de 29.6%, mas ela não pode ser interpretada como erro de auditoria porque a área é não auditável. Flags relevantes: area_not_auditable_parcel_too_small_for_ring_core e vigor_not_validated_against_yield.",
   "_meta": {
    "model": "gpt-5.4-mini",
-   "latency_s": 3.97,
-   "prompt_tokens": 3383,
-   "completion_tokens": 647
+   "latency_s": 3.96,
+   "prompt_tokens": 3461,
+   "completion_tokens": 578
   }
  },
  "validation": {

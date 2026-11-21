@@ -38,7 +38,8 @@ sync_and_launch() {
   tar czf "$tmp/code.tgz" $CODE
   colab upload -s "$S" "$tmp/code.tgz" /content/agririsk_v2_code.tgz
   if [ "$JOB" = "eval" ] && [ "${UPLOAD_MODELS:-1}" = "1" ]; then   # modelos já treinados na GPU
-    tar czf "$tmp/models.tgz" artifacts/agent01 artifacts/agent02/unet_delineation.pt artifacts/agent02/metrics.json
+    tar czf "$tmp/models.tgz" artifacts/agent01 artifacts/agent02/unet_delineation.pt artifacts/agent02/metrics.json \
+      artifacts/agent02/audit_variants.json artifacts/agent03
     colab upload -s "$S" "$tmp/models.tgz" /content/agririsk_v2_models.tgz
   fi
   rm -rf "$tmp"
@@ -51,7 +52,7 @@ if os.path.exists("/content/agririsk_v2_models.tgz") and "${UPLOAD_MODELS:-1}" =
 subprocess.run("pkill -f colab_remote_", shell=True)
 log = open("/content/agririsk_v2/job.log", "w")
 env = {**os.environ, "PER_FOLD": "${PER_FOLD:-30}", "EPOCHS01": "${EPOCHS01:-80}", "EPOCHS02": "${EPOCHS02:-40}",
-       "N_PAYLOADS": "${N_PAYLOADS:-60}"}
+       "N_PAYLOADS": "${N_PAYLOADS:-60}", "CHECK_INDEX": "${CHECK_INDEX:-0}", "REDO": "${REDO:-}"}
 subprocess.Popen(["bash", "$SCRIPT"], cwd="/content/agririsk_v2", stdout=log,
                  stderr=subprocess.STDOUT, stdin=subprocess.DEVNULL, start_new_session=True, env=env)
 print("job $JOB iniciado na VM")

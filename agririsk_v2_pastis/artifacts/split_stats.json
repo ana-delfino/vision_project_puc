@@ -1,0 +1,38 @@
+{
+ "train": {
+  "patches": 90,
+  "parcels": 3125,
+  "wheat_parcels": 553,
+  "wheat_pixel_pct": 14.2,
+  "tiles": {
+   "t30uxv": 27,
+   "t31tfj": 13,
+   "t31tfm": 25,
+   "t32ulu": 25
+  }
+ },
+ "val": {
+  "patches": 30,
+  "parcels": 1023,
+  "wheat_parcels": 194,
+  "wheat_pixel_pct": 11.9,
+  "tiles": {
+   "t30uxv": 8,
+   "t31tfj": 8,
+   "t31tfm": 7,
+   "t32ulu": 7
+  }
+ },
+ "test": {
+  "patches": 30,
+  "parcels": 1043,
+  "wheat_parcels": 198,
+  "wheat_pixel_pct": 14.3,
+  "tiles": {
+   "t30uxv": 9,
+   "t31tfj": 3,
+   "t31tfm": 9,
+   "t32ulu": 9
+  }
+ }
+}

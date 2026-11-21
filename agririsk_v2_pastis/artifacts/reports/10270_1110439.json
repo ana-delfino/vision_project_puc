@@ -114,12 +114,12 @@
     {
      "date": "2019-05-15",
      "p": 0.873,
-     "threshold": 0.516
+     "threshold": 0.49
     },
     {
      "date": "2019-06-16",
      "p": 0.845,
-     "threshold": 0.606
+     "threshold": 0.49
     },
     {
      "date": "2019-07-18",
@@ -129,17 +129,17 @@
     {
      "date": "2019-08-19",
      "p": 0.876,
-     "threshold": 0.392
+     "threshold": 0.342
     },
     {
      "date": "2019-09-20",
      "p": 0.879,
-     "threshold": 0.371
+     "threshold": 0.342
     },
     {
      "date": "2019-10-22",
      "p": 0.878,
-     "threshold": 0.376
+     "threshold": 0.342
     }
    ],
    "confirmed_since": "2019-04-13"
@@ -163,7 +163,8 @@
    "inconsistency_score": 59.77,
    "threshold_inconsistency": 29.28,
    "declared_area_supported": false,
-   "parcel_cut_by_image_edge": false
+   "parcel_cut_by_image_edge": false,
+   "not_auditable_reason": null
   },
   "low_vigor": {
    "low_vigor_pct": 1.24,
@@ -203,13 +204,14 @@
    "inconsistency_score": 59.77,
    "threshold_inconsistency": 29.28,
    "declared_area_supported": false,
-   "parcel_cut_by_image_edge": false
+   "parcel_cut_by_image_edge": false,
+   "not_auditable_reason": null
   },
   "regional_comparison": {
    "applicable": true,
    "n_wheat_parcels_in_region_train": 150,
    "ndvi_integral": 3.3,
-   "ndvi_integral_percentile": 30.7,
+   "ndvi_integral_percentile": 32.0,
    "peak_ndvi": 0.937,
    "peak_ndvi_percentile": 85.3,
    "peak_date": "2019-05-15",
@@ -246,7 +248,7 @@
   },
   {
    "agent": "agent02",
-   "seconds": 0.05
+   "seconds": 0.04
   },
   {
    "agent": "agent03",
@@ -254,41 +256,41 @@
   },
   {
    "agent": "agent04",
-   "seconds": 4.16
+   "seconds": 3.99
   }
  ],
  "agent04_output": {
-  "diagnostico": "A cultura declarada (trigo de inverno) foi confirmada pela série temporal Sentinel-2, com confirmação desde 2019-04-13. Contudo, a área declarada não é sustentada pela imagem SPOT: a área declarada é 6.81 ha e o cadastro registra 5.24 ha, com diferença de 30.0% e inconsistência acima do limiar. O vigor acumulado da parcela ficou em faixa intermediária no benchmark regional, com pico de NDVI elevado, porém com atraso de 16 dias em relação à mediana regional.",
+  "diagnostico": "A cultura declarada (trigo de inverno) foi confirmada pela série temporal Sentinel-2, com confirmação desde 2019-04-13. Porém, a área declarada de 6.81 ha não é suportada pela imagem: o audit de área aponta inconsistência elevada (59.77 acima do limiar de 29.28), com área de cadastro de 5.24 ha e diferença declarada-cadastro de 30.0%. Além disso, há sinal de ciclo mais tardio que o benchmark regional (pico NDVI em 2019-05-15, 16 dias após a mediana regional).",
   "nivel_risco": "alto",
-  "parecer_risco": "O principal risco está na divergência de área declarada versus cadastro/imagem, classificada como não suportada pela auditoria. A cultura está consistente com trigo de inverno, então o risco não é de enquadramento da cultura, mas sim de sobredeclaração de área. Os indicadores de vigor e fenologia não apontam anomalia extrema, porém o ciclo foi mais tardio que o padrão regional.",
+  "parecer_risco": "O principal risco está na divergência de área declarada versus evidência de imagem, que pode indicar superdeclaração de área. A cultura está consistente com trigo de inverno, mas o suporte da área é fraco e eleva o risco operacional do enquadramento. O vigor acumulado ficou em percentil 32.0 e o pico de NDVI em percentil 85.3, com 16 dias de atraso frente à região; isso sugere um ciclo compatível, porém mais tardio que o padrão regional. A heterogeneidade interna é baixa, com 1.24% de manchas de baixo vigor, o que não compensa a inconsistência de área.",
   "recomendacoes": [
    {
-    "acao": "Solicitar ao proponente a retificação/justificativa da área declarada, confrontando 6.81 ha declarados com 5.24 ha no cadastro e a auditoria por imagem.",
+    "acao": "Solicitar revisão documental e geoespacial da área declarada, pois a imagem não sustenta os 6.81 ha declarados em relação aos 5.24 ha do cadastro.",
     "prioridade": "alta",
-    "evidencia_referenciada": "regional_fusion.area_audit.declared_area_ha"
+    "evidencia_referenciada": "regional_fusion.area_audit"
    },
    {
-    "acao": "Realizar vistoria de campo focada em limites do talhão e conferência de cultivo, pois a imagem indica inconsistência de área apesar da cultura confirmada.",
+    "acao": "Programar vistoria de campo ou checagem cadastral focada em limite de talhão e medição de área, dado o inconsistency_score de 59.77 acima do threshold_inconsistency de 29.28.",
     "prioridade": "alta",
-    "evidencia_referenciada": "regional_fusion.area_audit.declared_area_supported"
+    "evidencia_referenciada": "field_delineation.area_audit"
    },
    {
-    "acao": "Usar o benchmark regional apenas como apoio técnico para o trigo confirmado, observando o atraso de 16 dias no pico fenológico e o NDVI integral no percentil 30.7.",
+    "acao": "Manter monitoramento do desenvolvimento do trigo, pois a cultura foi confirmada e a série indica confirmação desde 2019-04-13, com pico NDVI em 2019-05-15.",
+    "prioridade": "media",
+    "evidencia_referenciada": "satellite_timeseries.early_confirmation.confirmed_since"
+   },
+   {
+    "acao": "Usar o benchmark regional para acompanhamento de timing, já que o pico ocorreu 16 dias após a mediana regional; acompanhar se esse atraso persiste até o fim do ciclo.",
     "prioridade": "media",
     "evidencia_referenciada": "regional_fusion.regional_comparison.peak_delay_days_vs_region"
-   },
-   {
-    "acao": "Manter monitoramento rotineiro da safra e da próxima declaração, porque a cultura foi confirmada e a heterogeneidade de vigor é baixa (1.24% de manchas).",
-    "prioridade": "baixa",
-    "evidencia_referenciada": "field_delineation.low_vigor.low_vigor_pct"
    }
   ],
-  "limitacoes": "Flags de qualidade relevantes: declared_area_not_supported_by_image e vigor_not_validated_against_yield. Isto significa que a área declarada não foi sustentada pela imagem e que o vigor observado ainda não foi validado contra produtividade.",
+  "limitacoes": "Há sinalização de qualidade de dados para a área: declared_area_not_supported_by_image. O vigor observado não foi validado contra produtividade: vigor_not_validated_against_yield. Os percentis regionais de vigor e atraso são aplicáveis porque a cultura foi confirmada como trigo de inverno.",
   "_meta": {
    "model": "gpt-5.4-mini",
-   "latency_s": 4.16,
-   "prompt_tokens": 3703,
-   "completion_tokens": 542
+   "latency_s": 3.99,
+   "prompt_tokens": 3810,
+   "completion_tokens": 626
   }
  },
  "validation": {

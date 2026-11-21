@@ -12,18 +12,18 @@ echo "== dependências"; pip install -q segmentation-models-pytorch openai pytho
 echo "== dados (mesma seleção determinística do treino)"
 python -u prepare_data.py --per-fold "${PER_FOLD:-30}" --workers 8
 python -u prepare_rpg.py rasterize
-echo "== (verificação) índice de trigo reproduzível?"; python -u build_wheat_index.py --check || echo "AVISO: índice difere"
+if [ "${CHECK_INDEX:-0}" = "1" ]; then echo "== (verificação) índice de trigo reproduzível?"; python -u build_wheat_index.py --check || echo "AVISO: índice difere"; fi
 # etapas já concluídas nesta VM não são refeitas ao relançar (FORCE=1 refaz tudo)
-done_() { [ "${FORCE:-0}" != "1" ] && [ -f "$1" ] && grep -q "$2" "$1"; }
+done_() { [ "${FORCE:-0}" != "1" ] && [[ " ${REDO:-} " != *" $3 "* ]] && [ -f "$1" ] && grep -q "$2" "$1"; }
 echo "== agent02 · auditoria de área (3 variantes, escolha na validação)"
-done_ artifacts/agent02/audit_variants.json chosen_on_validation && echo "(já feito)" || python -u agent02_field_delineation.py audit
+done_ artifacts/agent02/audit_variants.json chosen_on_validation agent02 && echo "(já feito)" || python -u agent02_field_delineation.py audit
 echo "== agent01 · confirmação antecipada com limiar por data"
-done_ artifacts/agent01/metrics.json '"threshold": "por data' && echo "(já feito)" || python -u agent01_temporal_utae.py early
+done_ artifacts/agent01/metrics.json 'monotônico' agent01 && echo "(já feito)" || python -u agent01_temporal_utae.py early
 echo "== agent03 · benchmark regional + limiar de declaração"
-done_ artifacts/agent03/declaration.json tau && echo "(já feito)" || python -u agent03_regional_fusion.py
+done_ artifacts/agent03/declaration.json tau agent03 && echo "(já feito)" || python -u agent03_regional_fusion.py
 echo "== evidências dos Agents 01-03 para o Agent 04 (sem LLM)";      python -u orchestrator.py --export-payloads --n "${N_PAYLOADS:-60}"
 
-tar czf /content/artifacts_v2.tgz artifacts/agent01/metrics.json artifacts/agent02/metrics.json \
+tar czf /content/artifacts_v2.tgz --ignore-failed-read artifacts/agent01/metrics.json artifacts/agent02/metrics.json \
     artifacts/agent02/audit_variants.json artifacts/agent02/area_audit_test.json artifacts/agent02/evidence \
     artifacts/agent03 artifacts/payloads
 echo "AGRIRISK_DONE"

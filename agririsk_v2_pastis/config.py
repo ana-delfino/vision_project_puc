@@ -52,6 +52,11 @@ T_STEP_DAYS = 16
 T_STEPS = 26                      # 17/09/2018 → 27/10/2019
 S2_BANDS = ["B2", "B3", "B4", "B5", "B6", "B7", "B8", "B8A", "B11", "B12"]
 B_BLUE, B_RED, B_NIR = 0, 2, 6
+# Ciclo do trigo de inverno na safra 2018-19: semeadura no outono, colheita até o fim de julho.
+# O pico de NDVI só é procurado dentro do ciclo: depois da colheita, coberturas ou rebrota podem
+# deixar a área verde de novo (set-out) e esse pico não é do trigo.
+CROP_SEASON = (date(2018, 9, 17), date(2019, 8, 5))     # janela do ciclo (limites da meia-amplitude)
+CROP_PEAK_WINDOW = (date(2019, 1, 1), date(2019, 7, 31)) # onde o pico do trigo pode estar
 CLOUD_BLUE_THRESHOLD = 2500       # reflectância×1e4 no azul acima disso ≈ nuvem/neblina
 
 # ---------------------------------------------------------------------------

@@ -114,12 +114,12 @@
     {
      "date": "2019-05-15",
      "p": 0.78,
-     "threshold": 0.516
+     "threshold": 0.49
     },
     {
      "date": "2019-06-16",
      "p": 0.755,
-     "threshold": 0.606
+     "threshold": 0.49
     },
     {
      "date": "2019-07-18",
@@ -129,17 +129,17 @@
     {
      "date": "2019-08-19",
      "p": 0.722,
-     "threshold": 0.392
+     "threshold": 0.342
     },
     {
      "date": "2019-09-20",
      "p": 0.731,
-     "threshold": 0.371
+     "threshold": 0.342
     },
     {
      "date": "2019-10-22",
      "p": 0.733,
-     "threshold": 0.376
+     "threshold": 0.342
     }
    ],
    "confirmed_since": "2019-05-15"
@@ -155,7 +155,8 @@
    "declared_minus_registry_pct": 0.0,
    "threshold_inconsistency": 29.28,
    "declared_area_supported": null,
-   "parcel_cut_by_image_edge": false
+   "parcel_cut_by_image_edge": false,
+   "not_auditable_reason": "parcel_too_small_for_ring_core"
   },
   "low_vigor": {
    "low_vigor_pct": 10.3,
@@ -187,15 +188,16 @@
    "declared_minus_registry_pct": 0.0,
    "threshold_inconsistency": 29.28,
    "declared_area_supported": null,
-   "parcel_cut_by_image_edge": false
+   "parcel_cut_by_image_edge": false,
+   "not_auditable_reason": "parcel_too_small_for_ring_core"
   },
   "regional_comparison": {
    "applicable": true,
    "n_wheat_parcels_in_region_train": 125,
    "ndvi_integral": 4.79,
-   "ndvi_integral_percentile": 72.0,
+   "ndvi_integral_percentile": 69.6,
    "peak_ndvi": 0.836,
-   "peak_ndvi_percentile": 14.4,
+   "peak_ndvi_percentile": 15.2,
    "peak_date": "2019-05-15",
    "region_median_peak_date": "2019-05-15",
    "peak_delay_days_vs_region": 0,
@@ -219,18 +221,18 @@
    }
   },
   "data_quality_flags": [
-   "area_not_auditable_parcel_cut_by_image_edge",
+   "area_not_auditable_parcel_too_small_for_ring_core",
    "vigor_not_validated_against_yield"
   ]
  },
  "trace": [
   {
    "agent": "agent01",
-   "seconds": 13.22
+   "seconds": 12.92
   },
   {
    "agent": "agent02",
-   "seconds": 0.8
+   "seconds": 1.05
   },
   {
    "agent": "agent03",
@@ -238,40 +240,40 @@
   },
   {
    "agent": "agent04",
-   "seconds": 5.06
+   "seconds": 3.45
   }
  ],
  "agent04_output": {
-  "diagnostico": "A cultura declarada foi confirmada como trigo de inverno pela série temporal Sentinel-2, com confirmação desde 2019-05-15. A área declarada de 1.0 ha não pôde ser auditada pela imagem SPOT de forma conclusiva (parcela não cortada pela borda, mas declared_area_supported=null), então não há suporte automático para validar ou refutar a área. Na comparação regional, o vigor acumulado foi superior à mediana das parcelas de trigo da região (percentil 72.0), sem atraso fenológico em relação à região (0 dias). Há 10.3% da área com baixo vigor, concentrados em 1 mancha de 0.095 ha.",
+  "diagnostico": "A declaração de TRIGO DE INVERNO foi confirmada pela série temporal (p=0.836) e a cultura observada é compatível com trigo de inverno. A confirmação ocorreu em 2019-05-15. A área declarada de 1.0 ha é compatível com o cadastro de 1.0 ha, porém a auditoria de área não foi conclusiva porque a parcela é pequena demais para separar núcleo e faixa externa na imagem. O talhão apresenta 10.3% de manchas de baixo vigor, concentradas em 1 foco de 0.095 ha.",
   "nivel_risco": "baixo",
-  "parecer_risco": "Risco global baixo. A declaração de cultura está consistente com o modelo temporal e o desempenho agronômico relativo ao benchmark regional não sugere anomalia temporal relevante. O principal ponto de atenção é a heterogeneidade interna, com 10.3% de baixo vigor, mas sem indicação de problema sistêmico que eleve o risco para médio ou alto.",
+  "parecer_risco": "Risco global baixo (risk_score 0.1), sustentado pela confirmação da cultura, ausência de desvio de área auditável e sincronismo fenológico com a região (peak_date em 2019-05-15, sem atraso). O principal ponto de atenção é a heterogeneidade interna: baixo vigor em 10.3% da área, acima da maior parte dos trigos da região (percentil 80.0), embora sem evidência de risco alto para enquadramento da cultura.",
   "recomendacoes": [
    {
-    "acao": "Manter acompanhamento de rotina da parcela, sem ação corretiva prioritária no momento.",
+    "acao": "Manter acompanhamento de rotina da lavoura, sem elevação de prioridade operacional neste momento.",
     "prioridade": "baixa",
     "evidencia_referenciada": "regional_fusion.risk_level"
    },
    {
-    "acao": "Se necessário para o processo de crédito/seguro, solicitar documentação complementar da área declarada, pois a auditoria por imagem não confirmou nem refutou a área de 1.0 ha.",
+    "acao": "Registrar que a cultura foi confirmada como trigo de inverno a partir de 2019-05-15 para fins de análise de safra e crédito.",
     "prioridade": "baixa",
-    "evidencia_referenciada": "regional_fusion.area_audit.declared_area_supported"
+    "evidencia_referenciada": "regional_fusion.declaration_check.confirmed_since"
    },
    {
-    "acao": "Programar vistoria de campo apenas na mancha de baixo vigor para checar a causa local da heterogeneidade, considerando que 10.3% da área está nessa condição.",
+    "acao": "Se necessário para a validação cadastral, solicitar apoio documental complementar, pois a área não pôde ser auditada de forma conclusiva pela limitação geométrica da parcela pequena.",
+    "prioridade": "media",
+    "evidencia_referenciada": "regional_fusion.area_audit.not_auditable_reason"
+   },
+   {
+    "acao": "Programar vistoria de campo apenas se houver dúvida comercial ou de seguro sobre a mancha de baixo vigor, que ocupa 10.3% da área e 0.095 ha no maior foco.",
     "prioridade": "baixa",
     "evidencia_referenciada": "field_delineation.low_vigor.low_vigor_pct"
-   },
-   {
-    "acao": "Na próxima safra, comparar o comportamento da parcela com o benchmark regional para verificar se o padrão de vigor se mantém, já que a cultura foi confirmada e a comparação regional é aplicável.",
-    "prioridade": "baixa",
-    "evidencia_referenciada": "regional_fusion.regional_comparison.applicable"
    }
   ],
-  "limitacoes": "Flags de qualidade relevantes: area_not_auditable_parcel_cut_by_image_edge e vigor_not_validated_against_yield. Em linguagem simples: a área não ficou validada de forma conclusiva pela imagem, e o vigor observado ainda não foi validado contra produtividade real.",
+  "limitacoes": "Há uma limitação de qualidade relevante: a área não é auditável porque a parcela é pequena demais para separar núcleo e faixa externa. Também consta a flag de que o vigor ainda não foi validado contra produtividade, então o baixo vigor observado não deve ser tratado sozinho como perda de rendimento.",
   "_meta": {
    "model": "gpt-5.4-mini",
-   "latency_s": 5.06,
-   "prompt_tokens": 3387,
+   "latency_s": 3.45,
+   "prompt_tokens": 3465,
    "completion_tokens": 546
   }
  },

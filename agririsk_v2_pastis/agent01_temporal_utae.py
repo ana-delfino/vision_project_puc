@@ -373,13 +373,19 @@ def train(epochs=80, batch=4, lr=1e-3):
 # ---------------------------------------------------------------------------
 def evaluate_early(target_precision=0.95):
     """Para cada data de corte: limiar escolhido na VALIDAÇÃO para precisão ≥ alvo
-    (maximizando a cobertura), medido no TESTE. Um limiar único não serve: o modelo
-    fica menos confiante no início da safra."""
+    (maximizando a cobertura) e medido no TESTE. Um limiar único não serve: o modelo fica
+    menos confiante no início da safra.
+
+    Limiar MONOTÔNICO: τ(data) = min(τ_validação(data), τ(data anterior)). Calibrados de forma
+    independente numa validação pequena, os limiares oscilam entre datas (ex.: maio 0,52 →
+    junho 0,61), e a parcela "confirmada em maio" seria "desconfirmada em junho". Com o limiar
+    nunca subindo, a confirmação só cresce ao longo da safra; a precisão na validação é
+    registrada para mostrar o custo disso."""
     from sklearn.metrics import precision_recall_curve
     c = _load()
     rows_va, Xva, _ = stack_split("val")
     rows_te, Xte, _ = stack_split("test")
-    out = []
+    out, prev = [], 1.0
     for k in CUTOFFS:
         tv = parcel_table(rows_va, predict(c["model"], Xva, c["mean"], c["std"], cutoff=k)[0])
         tt = parcel_table(rows_te, predict(c["model"], Xte, c["mean"], c["std"], cutoff=k)[0])
@@ -387,17 +393,24 @@ def evaluate_early(target_precision=0.95):
         yt, pt = np.array([t["label"] == C.CROP_ID for t in tt]), np.array([t["p_wheat"] for t in tt])
         prec, rec, thr = precision_recall_curve(yv, pv)
         ok = np.where(prec[:-1] >= target_precision)[0]
-        tau = float(thr[ok[0]]) if len(ok) else 1.0
-        conf = pt >= tau
+        tau_raw = float(thr[ok[0]]) if len(ok) else 1.0
+        tau = min(tau_raw, prev)
+        prev = tau
+        cv, conf = pv >= tau, pt >= tau
         mc = parcel_metrics(tt)
         out.append({"cutoff_step": k, "date": GRID_DATES[k].isoformat(), "tau": round(tau, 4),
+                    "tau_independent": round(tau_raw, 4),
+                    "val_precision": round(float((cv & yv).sum() / max(cv.sum(), 1)), 4),
                     "wheat_f1": round(mc["wheat_f1"], 4), "wheat_auc": round(mc["wheat_auc"], 4),
                     "confirmed_share_of_wheat": round(float((conf & yt).sum() / max(yt.sum(), 1)), 4),
                     "precision_of_confirmed": round(float((conf & yt).sum() / max(conf.sum(), 1)), 4)})
-        print(f"  {GRID_DATES[k]} · τ {tau:.3f} · confirmados {out[-1]['confirmed_share_of_wheat']:.0%} "
-              f"com precisão {out[-1]['precision_of_confirmed']:.0%} · F1 {mc['wheat_f1']:.3f} AUC {mc['wheat_auc']:.3f}")
+        print(f"  {GRID_DATES[k]} · τ {tau:.3f} (independente {tau_raw:.3f}) · confirmados "
+              f"{out[-1]['confirmed_share_of_wheat']:.0%} com precisão {out[-1]['precision_of_confirmed']:.0%} "
+              f"(val {out[-1]['val_precision']:.0%}) · F1 {mc['wheat_f1']:.3f} AUC {mc['wheat_auc']:.3f}")
     m = json.loads((OUT / "metrics.json").read_text())
-    m["early_season"] = {"target_precision": target_precision, "threshold": "por data (validação)", "by_cutoff": out}
+    m["early_season"] = {"target_precision": target_precision,
+                         "threshold": "por data (validação), monotônico: nunca sobe ao longo da safra",
+                         "by_cutoff": out}
     (OUT / "metrics.json").write_text(json.dumps(m, indent=1))
 
 

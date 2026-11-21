@@ -46,14 +46,22 @@ def smooth(v: np.ndarray) -> np.ndarray:
 
 
 def phenology(ndvi_curve: np.ndarray) -> dict:
-    """Métricas fenológicas do trigo a partir da curva de NDVI da grade de 16 dias
-    (suavizada). Meia-amplitude (half-max) é o critério usual de início/fim do ciclo."""
+    """Métricas fenológicas do trigo a partir da curva de NDVI da grade de 16 dias (suavizada).
+
+    O pico é procurado só na janela em que o pico do trigo pode ocorrer (jan-jul/2019), e os
+    limites de meia-amplitude (início e fim do ciclo verde) só dentro do ciclo da safra. Sem isso,
+    uma cultura de cobertura ou rebrota após a colheita (verde em set-out) podia ser tomada como
+    o pico do trigo, gerando "atrasos" de meses e vigor artificialmente baixo."""
     v = smooth(ndvi_curve)
-    k = int(v.argmax())
-    lo = float(np.percentile(v, 10))
+    steps = np.arange(len(v))
+    in_season = np.array([C.CROP_SEASON[0] <= d <= C.CROP_SEASON[1] for d in GRID_DATES])
+    in_peak = np.array([C.CROP_PEAK_WINDOW[0] <= d <= C.CROP_PEAK_WINDOW[1] for d in GRID_DATES])
+    k = int(steps[in_peak][v[in_peak].argmax()])
+    s0, s1 = int(steps[in_season][0]), int(steps[in_season][-1])
+    lo = float(np.percentile(v[in_season], 10))
     half = lo + 0.5 * (v[k] - lo)
-    up = next((i for i in range(k, -1, -1) if v[i] < half), 0)
-    down = next((i for i in range(k, len(v)) if v[i] < half), len(v) - 1)
+    up = next((i for i in range(k, s0 - 1, -1) if v[i] < half), s0)
+    down = next((i for i in range(k, s1 + 1) if v[i] < half), s1)
     return {
         "peak_ndvi": round(float(v[k]), 3),
         "peak_date": GRID_DATES[k].isoformat(), "peak_step": k,

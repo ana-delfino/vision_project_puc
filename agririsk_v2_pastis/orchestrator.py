@@ -168,8 +168,9 @@ def load_payloads(n=None):
     return recs[:n] if n else recs
 
 
-def reports_from_payloads(n, model=None):
-    """Agent 04 sobre as evidências exportadas → relatórios ponta a ponta."""
+def reports_from_payloads(n, model=None, parcels=None):
+    """Agent 04 sobre as evidências exportadas → relatórios ponta a ponta.
+    parcels: lista "recorte_parcela" para gerar casos específicos em vez do sorteio."""
     out_dir = C.ARTIFACTS / "reports"
     out_dir.mkdir(parents=True, exist_ok=True)
     rng = np.random.default_rng(C.SEED)
@@ -181,6 +182,8 @@ def reports_from_payloads(n, model=None):
     for sc, k in (("honesto", n - 2 * (n // 4)), ("area_inflada", n // 4), ("cultura_falsa", n // 4)):
         rows = by_s.get(sc, [])
         pick += [rows[i] for i in rng.choice(len(rows), min(k, len(rows)), replace=False)]
+    if parcels:
+        pick = [r for r in recs if f"{r['patch']}_{r['parcel']}" in set(parcels)]
     for r in pick:
         t0 = time.time()
         p, payload = generate_parecer(r["agent01_output"], r["agent02_output"], r["agent03_output"], model)
@@ -236,6 +239,7 @@ if __name__ == "__main__":
     ap.add_argument("--eval-llm", action="store_true")
     ap.add_argument("--models", nargs="+", default=["gpt-4o-mini", "gpt-4.1-mini", "gpt-5.4-mini"])
     ap.add_argument("--model", default=None)
+    ap.add_argument("--parcels", nargs="+", default=None, help="(local) casos específicos: recorte_parcela")
     ap.add_argument("--export-payloads", action="store_true", help="(VM) Agents 01-03 → artifacts/payloads")
     ap.add_argument("--from-payloads", action="store_true", help="(local) Agent 04 sobre as evidências exportadas")
     a = ap.parse_args()
@@ -244,7 +248,7 @@ if __name__ == "__main__":
     elif a.eval_llm:
         eval_llm(a.n, a.models)
     else:
-        for r in (reports_from_payloads(a.n, a.model) if a.from_payloads else run_many(a.n, a.model)):
+        for r in (reports_from_payloads(a.n, a.model, a.parcels) if a.from_payloads else run_many(a.n, a.model)):
             a3, a4 = r["agent03_output"], r["agent04_output"]
             print(f"\n=== recorte {r['patch']} · parcela {r['parcel']} · cenário {r['scenario']} (classe real {r['true_crop_id']}) ===")
             if a3:

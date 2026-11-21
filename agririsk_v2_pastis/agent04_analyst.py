@@ -41,13 +41,19 @@ Como ler as evidências:
 - `declaration_check`: P(a cultura declarada é real) pela série temporal. \
 `consistent=false` significa que a declaração NÃO foi confirmada — isso precisa abrir o \
 diagnóstico, citando a cultura alternativa sugerida pelo modelo. `confirmed_since` é a \
-primeira data da safra em que a cultura já estava confirmada (com 95% de precisão).
+primeira data da safra em que a cultura já estava confirmada (com 95% de precisão). \
+`consistent=true` com `confirmed_since=null` NÃO é declaração contestada: a declaração passa no \
+limiar, mas o sinal temporal é fraco (nunca chegou à confirmação com 95% de precisão). Diga \
+isso assim; não escreva que a cultura "não foi confirmada" nesse caso.
 - `area_audit`: confere se a imagem sustenta o polígono/área declarados. `declared_area_ha` é \
 a área declarada e `registry_area_ha` a do cadastro. `inconsistency_score` mede bordas de outros \
 talhões e áreas não cultivadas na faixa externa do polígono em relação ao núcleo; acima de \
 `threshold_inconsistency` → `declared_area_supported=false` (possível área declarada a maior): \
-diga isso explicitamente, citando as áreas em hectares. `declared_area_supported=null` = não \
-auditável (parcela cortada pela borda da imagem): mencione isso em `limitacoes`.
+diga isso explicitamente, citando as áreas em hectares. `declared_minus_registry_pct` é só a \
+diferença percentual entre declarado e cadastro: NUNCA a compare com `threshold_inconsistency`, \
+que é a escala de `inconsistency_score`. `declared_area_supported=null` = não \
+auditável; o motivo está em `not_auditable_reason` (parcela cortada pela borda da imagem, ou \
+parcela pequena demais para separar a faixa externa do núcleo): cite esse motivo em `limitacoes`.
 - `regional_comparison`: percentis são relativos às parcelas de trigo da mesma região \
 (ex.: ndvi_integral_percentile 8 = vigor acumulado abaixo de 92% dos trigos da região). \
 `peak_delay_days_vs_region` > 0 = ciclo atrasado em relação à região.
@@ -103,12 +109,22 @@ def build_schema(paths: List[str]) -> dict:
     }
 
 
+def _area_audit_view(aa: dict) -> dict:
+    """Sem pontuação (não auditável), o limiar não tem com o que ser comparado: removê-lo evita
+    que o LLM o compare com a diferença percentual declarado × cadastro."""
+    if aa.get("inconsistency_score") is None:
+        return {k: v for k, v in aa.items() if k != "threshold_inconsistency"}
+    return aa
+
+
 def build_payload(a1: dict, a2: dict, a3: dict) -> dict:
     t = {k: v for k, v in a1.items() if k not in ("model", "ndvi_curve")}
     t["ndvi_curve_values"] = a1["ndvi_curve"]["values"]
+    d = {k: v for k, v in a2.items() if k != "evidence_png"}
+    d["area_audit"] = _area_audit_view(a2["area_audit"])
     return {"satellite_timeseries": t,
-            "field_delineation": {k: v for k, v in a2.items() if k != "evidence_png"},
-            "regional_fusion": a3}
+            "field_delineation": d,
+            "regional_fusion": {**a3, "area_audit": _area_audit_view(a3["area_audit"])}}
 
 
 def generate_parecer(a1: dict, a2: dict, a3: dict, model: str | None = None) -> tuple[dict, dict]:
@@ -182,4 +198,15 @@ def validate(parecer: dict, payload: dict) -> Dict[str, Any]:
     if not f["declaration_check"]["consistent"] and not re.search(r"declar|não confirm|nao confirm|diverg",
                                                                     parecer["diagnostico"] + parecer["parecer_risco"], re.I):
         issues.append("declaração divergente não mencionada no diagnóstico/parecer")
+    # erros de raciocínio encontrados na análise de erros (números certos, leitura errada)
+    dc, aa = f["declaration_check"], f["area_audit"]
+    if dc["consistent"] and re.search(r"(cultura|declara\w*|trigo)[^.]{0,40}n[ãa]o (foi |é |está )?confirmad", text, re.I):
+        issues.append("declaração consistente descrita como 'não confirmada'")
+    if aa["declared_area_supported"] is None:
+        # o limiar não vai no payload quando não há pontuação: citar "limiar" aqui é inventar a comparação
+        if re.search(r"(acima|abaixo|al[ée]m) do limiar|limiar de inconsist|threshold_inconsistency", text, re.I):
+            issues.append("área não auditável comparada com o limiar de inconsistência")
+        if aa.get("not_auditable_reason") != "parcel_cut_by_image_edge" and re.search(r"borda da imagem|cortad[ao] pela borda", text, re.I) \
+                and not re.search(r"n[ãa]o (foi |está |é )?cortad", text, re.I):
+            issues.append("motivo de não auditável trocado (borda da imagem)")
     return {"ok": not issues, "issues": issues}
