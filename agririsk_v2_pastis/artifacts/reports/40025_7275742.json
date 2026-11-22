@@ -255,41 +255,41 @@
   },
   {
    "agent": "agent04",
-   "seconds": 3.58
+   "seconds": 2.87
   }
  ],
  "agent04_output": {
-  "diagnostico": "Talhão 7275742, região t32ulu, com cultura declarada de trigo de inverno confirmada pela série temporal (consistent=true; p_declared=0.735) e confirmação desde 2019-03-12. A área declarada de 2.38 ha é sustentada pela imagem SPOT 6-7 (2.0 m) e coincide com o cadastro (2.38 ha), sem indício de excesso de área. No benchmark regional de trigo (216 parcelas), o ciclo foi mais tardio que a mediana da região: pico em 2019-06-16, 32 dias após a mediana regional. O vigor acumulado ficou em faixa intermediária (ndvi_integral_percentile 64.8), mas o pico de NDVI foi abaixo da maior parte dos trigos da região (percentil 38.4).",
+  "diagnostico": "A declaração de TRIGO DE INVERNO é consistente com a série temporal Sentinel-2 e foi confirmada desde 2019-03-12. A área declarada também é sustentada pela imagem SPOT 6-7: 2.38 ha declarados e 2.38 ha no cadastro, sem divergência entre declarado e registro. No comparativo regional, o vigor acumulado ficou em nível intermediário (percentil 64.8 entre 216 parcelas de trigo da região), com pico de NDVI relativamente mais baixo (percentil 38.4) e pico 32 dias após a mediana regional; há 8.03% da área com baixo vigor em 4 manchas.",
   "nivel_risco": "baixo",
-  "parecer_risco": "Risco global baixo. A declaração de trigo de inverno está consistente, a área está suportada e não há inconsistência relevante de polígono. O principal ponto de atenção é o atraso fenológico em relação à região (32 dias) e a presença de 8.03% da área com manchas de baixo vigor, embora o risco consolidado permaneça baixo.",
+  "parecer_risco": "O risco consolidado é baixo (0.207). A cultura declarada foi confirmada pela série temporal, a área está suportada pela imagem e não há indício de inconsistência de polígono. O principal ponto de atenção é o atraso fenológico em relação ao benchmark regional, com pico 32 dias após a mediana, além de baixa heterogeneidade localizada em 8.03% da parcela. Não há elementos para contestação da cultura ou da área.",
   "recomendacoes": [
    {
-    "acao": "Manter acompanhamento de rotina do talhão, sem ação corretiva prioritária, dado o enquadramento de risco baixo.",
+    "acao": "Manter o acompanhamento de rotina da parcela, sem medidas corretivas imediatas.",
     "prioridade": "baixa",
     "evidencia_referenciada": "regional_fusion.risk_level"
    },
    {
-    "acao": "Registrar em arquivo o atraso fenológico observado em relação à região, para referência na análise da safra.",
+    "acao": "Registrar a confirmação da cultura e da área no dossiê de crédito, usando a evidência de série temporal e a checagem espacial.",
+    "prioridade": "baixa",
+    "evidencia_referenciada": "regional_fusion.declaration_check.confirmed_since"
+   },
+   {
+    "acao": "Se houver nova safra, monitorar a evolução fenológica no início do ciclo, pois o pico ocorreu 32 dias após a mediana regional.",
     "prioridade": "baixa",
     "evidencia_referenciada": "regional_fusion.regional_comparison.peak_delay_days_vs_region"
    },
    {
-    "acao": "Se houver vistoria de campo, conferir as 4 manchas de baixo vigor mapeadas e sua distribuição no talhão.",
+    "acao": "Programar vistoria pontual apenas nas 4 manchas de baixo vigor para checagem de campo, sem elevar a prioridade do caso.",
     "prioridade": "baixa",
-    "evidencia_referenciada": "field_delineation.low_vigor"
-   },
-   {
-    "acao": "Usar a série temporal como evidência de confirmação da cultura desde 2019-03-12 em eventuais revisões cadastrais.",
-    "prioridade": "baixa",
-    "evidencia_referenciada": "regional_fusion.declaration_check.confirmed_since"
+    "evidencia_referenciada": "field_delineation.low_vigor.low_vigor_pct"
    }
   ],
-  "limitacoes": "Há um flag de qualidade indicando que o vigor ainda não foi validado contra produtividade (vigor_not_validated_against_yield). As comparações regionais de vigor e timing são válidas porque a cultura foi confirmada como trigo de inverno.",
+  "limitacoes": "Há uma flag de qualidade indicando que o vigor ainda não foi validado contra produtividade (vigor_not_validated_against_yield). Os percentis regionais são relativos às parcelas de trigo da mesma região e devem ser interpretados apenas dentro desse benchmark.",
   "_meta": {
    "model": "gpt-5.4-mini",
-   "latency_s": 3.54,
-   "prompt_tokens": 3860,
-   "completion_tokens": 539,
+   "latency_s": 2.85,
+   "prompt_tokens": 3858,
+   "completion_tokens": 533,
    "attempts": 1,
    "first_pass_ok": true,
    "first_issues": []

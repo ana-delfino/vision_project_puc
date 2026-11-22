@@ -255,41 +255,41 @@
   },
   {
    "agent": "agent04",
-   "seconds": 2.96
+   "seconds": 2.64
   }
  ],
  "agent04_output": {
-  "diagnostico": "Talhão com declaração de TRIGO DE INVERNO confirmada pela série temporal (p_declared=0.912; consistent=true), com confirmação desde 2019-02-08. A área também é sustentada pela imagem SPOT: área declarada 3.82 ha, cadastro 3.82 ha, e declared_area_supported=true. No benchmark regional, o desempenho foi bom para a safra: ndvi_integral=3.65 (percentil 81.9), peak_ndvi=0.902 (percentil 92.1), pico em 2019-04-29, 16 dias antes da mediana regional (2019-05-15). Não há manchas de baixo vigor na imagem (0.0%).",
+  "diagnostico": "A declaração de TRIGO DE INVERNO foi confirmada pela série temporal (p_declared=0.912) e o sinal já estava confirmado desde 2019-02-08. A área também é compatível com a imagem: a área declarada de 3.82 ha coincide com o cadastro de 3.82 ha e foi suportada na auditoria. Não há indícios de heterogeneidade relevante ou de manchas de baixo vigor na imagem SPOT. Em relação ao benchmark regional, o talhão apresenta vigor acumulado acima da maior parte dos trigos da região e pico de NDVI elevado, com pico antecipado em 16 dias frente à mediana regional.",
   "nivel_risco": "baixo",
-  "parecer_risco": "O conjunto de evidências é consistente com trigo de inverno e não aponta divergência de cultura nem problema de área. O vigor é elevado no contexto regional e a heterogeneidade visual é nula. O risco operacional estimado é baixo.",
+  "parecer_risco": "Risco global baixo. A cultura declarada está consistente com o comportamento temporal observado, a área foi suportada pela delimitação na imagem e não há evidência de anomalia estrutural ou de baixa cobertura/vigor. O único ponto a registrar é que o vigor ainda não foi validado contra produtividade, então a interpretação deve ser usada com cautela operacional.",
   "recomendacoes": [
    {
-    "acao": "Manter o acompanhamento de rotina do talhão, sem priorização de vistoria extraordinária.",
+    "acao": "Prosseguir com o crédito sem restrição adicional com base neste monitoramento, mantendo o acompanhamento de rotina.",
     "prioridade": "baixa",
     "evidencia_referenciada": "regional_fusion.risk_level"
    },
    {
-    "acao": "Arquivar a evidência de conformidade de cultura e área para suporte documental do crédito/seguro.",
+    "acao": "Arquivar a comprovação de cultura e área no dossiê do talhão, pois a série temporal confirmou trigo de inverno e a área foi suportada pela auditoria.",
     "prioridade": "baixa",
-    "evidencia_referenciada": "regional_fusion.declaration_check"
+    "evidencia_referenciada": "regional_fusion.declaration_check.confirmed_since"
    },
    {
-    "acao": "Usar este talhão como referência interna de desempenho regional da safra, dado o vigor acima da mediana dos trigos da região.",
+    "acao": "Manter monitoramento de rotina na próxima safra para comparar repetição do padrão fenológico e de vigor.",
     "prioridade": "baixa",
-    "evidencia_referenciada": "regional_fusion.regional_comparison"
+    "evidencia_referenciada": "regional_fusion.regional_comparison.peak_delay_days_vs_region"
    },
    {
-    "acao": "Na próxima safra, repetir o monitoramento por sensoriamento remoto para confirmar se o padrão de vigor e timing se mantém.",
+    "acao": "Registrar a limitação de interpretação de vigor, já que o indicador ainda não foi validado contra produtividade.",
     "prioridade": "baixa",
-    "evidencia_referenciada": "satellite_timeseries.early_confirmation.confirmed_since"
+    "evidencia_referenciada": "regional_fusion.data_quality_flags"
    }
   ],
-  "limitacoes": "Há uma flag de qualidade: vigor ainda não validado contra produtividade (vigor_not_validated_against_yield).",
+  "limitacoes": "Há uma limitação de qualidade de dados: o vigor observado ainda não foi validado contra produtividade (`vigor_not_validated_against_yield`).",
   "_meta": {
    "model": "gpt-5.4-mini",
-   "latency_s": 2.9,
-   "prompt_tokens": 3858,
-   "completion_tokens": 450,
+   "latency_s": 2.62,
+   "prompt_tokens": 3856,
+   "completion_tokens": 475,
    "attempts": 1,
    "first_pass_ok": true,
    "first_issues": []

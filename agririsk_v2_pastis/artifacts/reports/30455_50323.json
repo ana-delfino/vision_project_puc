@@ -255,44 +255,46 @@
   },
   {
    "agent": "agent04",
-   "seconds": 6.72
+   "seconds": 8.51
   }
  ],
  "agent04_output": {
-  "diagnostico": "Talhão 50323 (patch 30455, região t31tfm) com declaração de trigo de inverno não contestada pela série temporal (consistent=true), porém o sinal temporal é fraco: a probabilidade para a cultura declarada ficou em 0.188, abaixo da alternativa do modelo, cereal misto (0.245), e nunca atingiu confirmação com 95% de precisão (confirmed_since=null). A área declarada de 2.5 ha é sustentada pela imagem SPOT e pelo cadastro (declared_area_supported=true; inconsistency_score 22.81 abaixo do limiar 29.28). O comportamento vegetativo também é desfavorável no benchmark regional de trigo: vigor acumulado muito baixo (percentil 1.6), pico de NDVI abaixo de quase todo o grupo e pico 16 dias mais tardio que a mediana regional. O risco consolidado é alto.",
+  "diagnostico": "A série temporal não sustenta a cultura declarada de trigo de inverno no nível esperado: o modelo aponta cereal misto como cultura mais provável (p_declared=0.188 para trigo; top1 cereal misto=0.245). Como consistent=true com confirmed_since=null, a declaração não deve ser tratada como contestada; ela passa no limiar, mas o sinal temporal é fraco e não chegou à confirmação com 95% de precisão em nenhum momento da safra. A área declarada é sustentada pela imagem: 2.5 ha declarados e 2.5 ha no cadastro, com declared_area_supported=true e inconsistency_score=22.81 abaixo do limiar 29.28. No benchmark regional de trigo, o talhão apresenta vigor muito baixo (ndvi_integral_percentile=1.6; peak_ndvi_percentile=0.0) e pico 16 dias mais tardio que a mediana regional.",
   "nivel_risco": "alto",
-  "parecer_risco": "Risco alto por combinação de baixa evidência temporal para trigo, benchmark regional muito fraco de vigor e atraso fenológico em relação às parcelas de trigo da mesma região. A área não apresenta inconsistência relevante, então o principal alerta está na cultura/aptidão temporal e no desempenho vegetativo relativo. A presença de uma mancha pequena de baixo vigor não é o fator dominante, mas reforça a heterogeneidade.",
+  "parecer_risco": "Risco alto pela combinação de sinal temporal fraco para trigo, alternativa mais provável de cereal misto e desempenho vegetativo muito inferior ao benchmark regional de trigo. A área do talhão está suportada pela imagem e não é o principal foco da inconsistência.",
   "recomendacoes": [
    {
-    "acao": "Realizar vistoria de campo para confirmar a cultura efetivamente implantada e confrontar a condição fenológica observada com a declaração de trigo de inverno.",
+    "acao": "Solicitar vistoria de campo e documentação complementar para confirmar a cultura implantada na área.",
     "prioridade": "alta",
     "evidencia_referenciada": "regional_fusion.declaration_check"
    },
    {
-    "acao": "Solicitar documentação complementar de implantação/operacionalização da lavoura para validar a troca entre trigo de inverno e a alternativa sugerida pelo modelo (cereal misto).",
+    "acao": "Analisar a possibilidade de a cultura efetiva ser cereal misto, já que essa foi a alternativa mais provável do modelo temporal.",
     "prioridade": "alta",
     "evidencia_referenciada": "regional_fusion.declaration_check.temporal_model_alternative"
    },
    {
-    "acao": "Reavaliar o caso com base no benchmark regional, pois o talhão está no percentil 1.6 de NDVI integral e com pico 16 dias após a mediana regional.",
-    "prioridade": "alta",
-    "evidencia_referenciada": "regional_fusion.regional_comparison"
+    "acao": "Manter a área declarada como apoiada pela imagem, sem ajuste de polígono neste momento.",
+    "prioridade": "baixa",
+    "evidencia_referenciada": "regional_fusion.area_audit.declared_area_supported"
    },
    {
-    "acao": "Manter monitoramento do talhão até a próxima safra ou próxima etapa fenológica para verificar se o padrão de baixo vigor se repete.",
+    "acao": "Programar monitoramento reforçado na próxima safra, pois o vigor ficou muito abaixo do padrão regional de trigo e o pico ocorreu 16 dias após a mediana regional.",
     "prioridade": "media",
-    "evidencia_referenciada": "regional_fusion.regional_comparison.low_vigor_pct"
+    "evidencia_referenciada": "regional_fusion.regional_comparison"
    }
   ],
-  "limitacoes": "A única sinalização de qualidade explícita é vigor_not_validated_against_yield: o vigor observado ainda não foi validado contra produtividade. Não há limitação de auditabilidade de área; a parcela não foi cortada pela borda da imagem e a área foi suportada pela imagem e pelo cadastro.",
+  "limitacoes": "A comparação de vigor com produtividade não foi validada para esta parcela (data_quality_flags: vigor_not_validated_against_yield).",
   "_meta": {
    "model": "gpt-5.4-mini",
-   "latency_s": 6.68,
-   "prompt_tokens": 3850,
-   "completion_tokens": 598,
-   "attempts": 1,
-   "first_pass_ok": true,
-   "first_issues": []
+   "latency_s": 8.48,
+   "prompt_tokens": 8298,
+   "completion_tokens": 1010,
+   "attempts": 2,
+   "first_pass_ok": false,
+   "first_issues": [
+    "declaração consistente descrita como 'não confirmada' ou 'contestada'"
+   ]
   }
  },
  "validation": {

@@ -4,7 +4,7 @@ Sistema multiagente que confere um talhão **declarado como trigo de inverno**: 
 plantado (e **desde quando** dá para confirmar), **quanto** está plantado (a área declarada é
 sustentada pela imagem?) e **como** ele se compara aos trigos **da mesma região**. Combina a série
 temporal Sentinel-2, a imagem SPOT de alta resolução e o polígono declarado **da mesma parcela**,
-e entrega um parecer rastreável para o analista de crédito ou seguro rural.
+e entrega um parecer rastreável para o analista de crédito rural.
 
 - **Apresentação:** [PDF](docs/AgriRisk_MA_v2_apresentacao.pdf) · [HTML interativo](docs/AgriRisk_MA_v2_apresentacao.html) (o GitHub não renderiza HTML: baixe e abra no navegador)
 

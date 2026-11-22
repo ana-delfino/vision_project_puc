@@ -240,41 +240,41 @@
   },
   {
    "agent": "agent04",
-   "seconds": 3.63
+   "seconds": 2.49
   }
  ],
  "agent04_output": {
-  "diagnostico": "Talhão 13362682 (patch 40025, região t32ulu) compatível com TRIGO DE INVERNO. A série temporal confirmou a cultura desde 2019-02-08, com probabilidade de 0.866 para a classe declarada. Na imagem SPOT 6-7 (2,0 m), a área declarada de 1,4 ha não pôde ser auditada por completo porque a parcela é pequena demais para separar núcleo e faixa externa. Em relação ao benchmark regional, o ciclo foi adiantado (-32 dias vs mediana regional) e o vigor acumulado ficou acima da maior parte dos trigos da região (percentil 84,7), embora exista heterogeneidade espacial relevante (18,47% de baixa vigor em 2 manchas).",
+  "diagnostico": "A declaração de TRIGO DE INVERNO é compatível com a série temporal Sentinel-2: p_declared=0.866 e consistent=true, com confirmação desde 2019-02-08. A área declarada de 1.4 ha não pôde ser auditada pela imagem por ser um talhão pequeno demais para separar núcleo e faixa externa (parcel_too_small_for_ring_core). Em relação ao benchmark regional de trigo, o talhão teve vigor acumulado acima da mediana (percentil 84.7), pico NDVI de 0.834 e pico 32 dias antes da mediana regional; porém apresenta alta heterogeneidade espacial, com 18.47% da área em baixo vigor e percentil 97.7 nesse indicador.",
   "nivel_risco": "baixo",
-  "parecer_risco": "Risco baixo. Não há contestação da cultura declarada e o sinal temporal é consistente com trigo de inverno. A principal ressalva é operacional: a área declarada não foi auditável pela limitação geométrica da parcela, então não é possível validar a sustentação integral do polígono/área declarados. Há também heterogeneidade interna, mas sem elevar o risco global.",
+  "parecer_risco": "O risco global é baixo. A cultura declarada foi confirmada e o comportamento temporal é coerente com trigo de inverno. A limitação principal está na área, que não foi auditável pela geometria da parcela. Apesar do vigor acumulado favorável, a concentração de manchas de baixo vigor é elevada para o padrão regional e merece acompanhamento, sem alterar por si só a classificação de risco.",
   "recomendacoes": [
    {
-    "acao": "Manter enquadramento como trigo de inverno e seguir com monitoramento de rotina até a colheita.",
+    "acao": "Manter acompanhamento de rotina da parcela até o encerramento da safra, com atenção à persistência das manchas de baixo vigor.",
     "prioridade": "baixa",
-    "evidencia_referenciada": "regional_fusion.declaration_check"
+    "evidencia_referenciada": "regional_fusion.regional_comparison.low_vigor_pct"
    },
    {
-    "acao": "Registrar que a área declarada de 1,4 ha não pôde ser auditada pela imagem, pois a parcela é pequena demais para separar núcleo e faixa externa; usar a área de cadastro de 1,08 ha como referência documental até nova vistoria.",
-    "prioridade": "baixa",
-    "evidencia_referenciada": "field_delineation.area_audit"
+    "acao": "Solicitar/validar a documentação de área declarada, pois a imagem não permitiu auditoria da área de 1.4 ha frente ao cadastro de 1.08 ha.",
+    "prioridade": "media",
+    "evidencia_referenciada": "regional_fusion.area_audit.declared_area_ha"
    },
    {
-    "acao": "Se houver exigência operacional de conferência de área, solicitar documentação complementar ou vistoria de campo para validar o perímetro e a área efetiva, já que a checagem por sensoriamento remoto ficou inconclusiva.",
+    "acao": "Programar vistoria de campo se houver dúvida operacional sobre a heterogeneidade interna, dada a baixa vigorosa em 18.47% da área e 2 manchas mapeadas.",
     "prioridade": "baixa",
-    "evidencia_referenciada": "regional_fusion.area_audit.not_auditable_reason"
+    "evidencia_referenciada": "field_delineation.low_vigor.low_vigor_pct"
    },
    {
-    "acao": "Acompanhar a heterogeneidade interna reportada na imagem, com 18,47% de baixa vigor em 2 manchas, para verificar se persiste até a próxima safra.",
+    "acao": "Usar o histórico desta safra como referência para a próxima, pois o talhão confirmou trigo de inverno cedo (2019-02-08) e apresentou ciclo antecipado em relação à região.",
     "prioridade": "baixa",
-    "evidencia_referenciada": "field_delineation.low_vigor"
+    "evidencia_referenciada": "regional_fusion.declaration_check.confirmed_since"
    }
   ],
-  "limitacoes": "Há duas limitações principais: a área não é auditável por ser uma parcela pequena demais para separar núcleo e faixa externa; e o indicador de vigor ainda não foi validado contra produtividade, então deve ser interpretado apenas como sinal de variabilidade espacial. Também não há confirmação de área sustentada pela imagem, apenas impossibilidade de auditar com robustez.",
+  "limitacoes": "A área não foi auditável porque a parcela é pequena demais para separar faixa externa e núcleo (parcel_too_small_for_ring_core). Há uma flag de qualidade indicando que o vigor ainda não foi validado contra produtividade.",
   "_meta": {
    "model": "gpt-5.4-mini",
-   "latency_s": 3.59,
-   "prompt_tokens": 3524,
-   "completion_tokens": 605,
+   "latency_s": 2.47,
+   "prompt_tokens": 3522,
+   "completion_tokens": 562,
    "attempts": 1,
    "first_pass_ok": true,
    "first_issues": []

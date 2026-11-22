@@ -1,6 +1,6 @@
 """
 Agent 04 — Agricultural Analyst Agent (v2 · trigo)
-AgriRisk-MA v2 · Parecer técnico para o analista de crédito/seguro rural
+AgriRisk-MA v2 · Parecer técnico para o analista de crédito rural
 
 LLM da OpenAI (padrão gpt-5.4-mini, escolhido por avaliação; configurável) com STRUCTURED OUTPUTS:
   1. JSON sempre válido no schema do parecer (json_schema, strict).
@@ -32,7 +32,7 @@ for f in C.ENV_FILES:
 RISK_PT = {"low": "baixo", "medium": "medio", "high": "alto"}
 
 SYSTEM_PROMPT = """\
-Você é um agrônomo que apoia analistas de crédito e seguro rural. Escreve pareceres \
+Você é um agrônomo que apoia analistas de crédito rural. Escreve pareceres \
 sobre talhões declarados como TRIGO DE INVERNO (cultura e área) a partir de evidências \
 estruturadas de um pipeline de sensoriamento remoto: série temporal Sentinel-2 (modelo \
 espaço-temporal), delimitação do talhão na imagem SPOT de alta resolução (2 m) e um \
@@ -46,7 +46,8 @@ diagnóstico, citando a cultura alternativa sugerida pelo modelo. `confirmed_sin
 primeira data da safra em que a cultura já estava confirmada (com 95% de precisão). \
 `consistent=true` com `confirmed_since=null` NÃO é declaração contestada: a declaração passa no \
 limiar, mas o sinal temporal é fraco (nunca chegou à confirmação com 95% de precisão). Diga \
-isso assim; não escreva que a cultura "não foi confirmada" nesse caso.
+isso assim; não escreva que a cultura "não foi confirmada" nem que a declaração "foi \
+contestada" nesse caso. Uma cultura alternativa mais provável não torna a declaração contestada.
 - `area_audit`: confere se a imagem sustenta o polígono/área declarados. `declared_area_ha` é \
 a área declarada e `registry_area_ha` a do cadastro. `inconsistency_score` mede bordas de outros \
 talhões e áreas não cultivadas na faixa externa do polígono em relação ao núcleo; acima de \
@@ -229,7 +230,8 @@ def validate(parecer: dict, payload: dict) -> Dict[str, Any]:
     dc, aa = f["declaration_check"], f["area_audit"]
     frase0 = r"(?:[^.]|\.\d)"   # mesmo período (o ponto decimal não encerra a frase)
     if dc["consistent"] and (re.search(r"(cultura|declara\w*|trigo)[^.]{0,40}n[ãa]o (foi |é |está )?confirmad", text, re.I)
-                             or re.search(r"(?<!n[ãa]o )(?<!n[ãa]o foi )(?<!n[ãa]o é )contestad", text, re.I)):
+                             or any(not re.search(r"n[ãa]o\b", text[max(0, m.start() - 40):m.start()], re.I)
+                                    for m in re.finditer(r"contestad", text, re.I))):
         issues.append("declaração consistente descrita como 'não confirmada' ou 'contestada'")
     if "?" in text:
         issues.append("parecer com pergunta ou hesitação (afirme só o que as evidências sustentam)")

@@ -5,7 +5,7 @@ AgriRisk-MA · "Quanto está plantado?" — o detalhe espacial que só a alta re
 Por que este agente (e não classificar a cultura na imagem)?
   Identificar a cultura é um problema TEMPORAL (Agent 01). Uma imagem única de alta
   resolução brilha em GEOMETRIA: bordas, carreadores, cercas, áreas não cultivadas.
-  No crédito/seguro rural, a área entra no cálculo do valor financiado/segurado →
+  No crédito rural, a área entra no cálculo do valor financiado →
   área declarada maior que a cultivada é sobrefinanciamento.
 
 Rótulos: polígonos declarados do RPG 2019 (IGN/ASP) rasterizados a 2 m (prepare_rpg.py).
