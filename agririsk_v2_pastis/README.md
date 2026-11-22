@@ -10,10 +10,29 @@ e entrega um parecer rastreável para o analista de crédito ou seguro rural.
 
 ## Arquitetura
 
+Grafo LangGraph ([`orchestrator.py`](orchestrator.py)): os Agents 01 e 02 rodam em paralelo sobre a
+mesma parcela, o 03 sincroniza os dois e o 04 escreve o parecer.
+
+```mermaid
+flowchart LR
+    START(["START<br/>parcela declarada como trigo<br/>(recorte, id, área declarada)"])
+    START --> A1
+    START --> A2
+    A1["<b>Agent 01</b> · agent01_temporal_utae.py<br/>U-TAE-lite · 26 imagens Sentinel-2<br/>o que está plantado e desde quando"]
+    A2["<b>Agent 02</b> · agent02_field_delineation.py<br/>U-Net multitarefa · SPOT 2 m + polígono RPG<br/>quanto está plantado"]
+    B[("benchmark regional<br/>artifacts/agent03")]
+    A1 -->|"P(cultura), confirmação,<br/>curva de NDVI"| A3
+    A2 -->|"auditoria de área,<br/>manchas de baixo vigor"| A3
+    B --> A3
+    A3["<b>Agent 03</b> · agent03_regional_fusion.py<br/>limiar de declaração + percentis regionais<br/>score e nível de risco"]
+    A3 -->|"evidências (JSON)"| A4
+    A4["<b>Agent 04</b> · agent04_analyst.py<br/>gpt-5.4-mini · JSON Schema estrito<br/>validação + 1 nova tentativa"]
+    A4 --> END(["END<br/>relatório em artifacts/reports"])
 ```
-START ─┬─> Agent 01 · U-TAE-lite (26 imagens Sentinel-2): o que e desde quando ─┐
-       └─> Agent 02 · delimitação no SPOT 2 m: quanto está plantado ─────────────┴─> Agent 03 · região + risco ─> Agent 04 · parecer (LLM)
-```
+
+Na execução em lote, os Agents 01-03 rodam na VM de avaliação (`--export-payloads` grava as
+evidências em `artifacts/payloads`) e o Agent 04 roda depois, na VM do job `llm`
+(`--from-payloads`).
 
 | Agente | Modelo | Por quê |
 |---|---|---|
@@ -67,6 +86,16 @@ Toda a execução roda no **Google Colab** (google-colab-cli): treino em GPU T4 
 `API_KEY_GPT` do `.env` vai para a VM, num arquivo com permissão 600 apagado ao fim do job.
 Localmente fica só a montagem da apresentação.
 
+**Versões do Python:**
+
+| Onde | Python | Principais pacotes |
+|---|---|---|
+| Local (edição, apresentação, figuras) | **3.14.2** | torch 2.15.0 (CPU), numpy 2.5.4, opencv 5.1.0, openai 3.57.0 |
+| VMs do Google Colab (treino na T4; avaliação e Agent 04 na CPU) | **3.13.18** (o da imagem do Colab, sem reinstalar) | torch 2.14.1 e numpy 2.4.6 da imagem; o resto via `pip install` nos scripts `colab_remote_*.sh` |
+
+Versões conferidas em 22/11/2026. A imagem do Colab é atualizada pelo Google, então numa
+execução futura a versão pode ser outra.
+
 ```bash
 # ambiente local (a partir da raiz do repositório)
 python -m venv .venv && source .venv/bin/activate
@@ -109,19 +138,7 @@ python build_readme_figures.py # figuras do README da raiz → docs/figures/ (s�
 | `artifacts/agent02/` | modelo de delimitação, métricas, comparação das 3 variantes da auditoria, evidências visuais |
 | `artifacts/agent03/` | benchmark regional, limiar de declaração e métricas |
 | `artifacts/payloads/` | evidências dos Agents 01-03 por parcela (entrada do Agent 04) |
-| `artifacts/agent04/`, `artifacts/reports/` | comparação de LLMs e relatórios ponta a ponta |
-
-## Limitações
-
-- **Vigor:** não foi validado contra produtividade (o PASTIS não tem colheita).
-- **Abrangência:** uma safra (2018-19), na França.
-- **Simulações:** declarações falsas e áreas infladas são simuladas (outra cultura declarada como
-  trigo; polígono ampliado em +15% e +30%).
-- **Instâncias:** parcelas vizinhas sem borda visível se fundem, por isso a área não é medida por
-  instância; a auditoria usa evidência geométrica (faixa externa × núcleo).
-- **SPOT:** uma única data por ano.
-- **Parcelas pequenas:** abaixo de ~1,5 ha a auditoria de área não separa a faixa externa do núcleo; a
-  parcela é marcada como não auditável, com o motivo (6 das 60 parcelas do teste ponta a ponta).
+| `artifacts/agent04/`, `artifacts/reports/` | comparação de LLMs e relatórios ponta a ponta |ß
 
 ## Referências
 

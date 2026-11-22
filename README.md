@@ -47,7 +47,26 @@ flowchart LR
     A4["<b>Agent 04</b> · LLM<br/>parecer com evidência rastreável<br/>+ validação automática"] --> OUT["Parecer para o analista<br/>de crédito / seguro"]
 ```
 
-Os Agents 01 e 02 são os modelos de visão computacional treinados neste trabalho. O 03 transforma as saídas deles em decisão, e o 04 as comunica. A orquestração usa LangGraph, com 01 e 02 em paralelo.
+Os Agents 01 e 02 são os modelos de visão computacional treinados neste trabalho. O 03 transforma as saídas deles em decisão, e o 04 as comunica.
+
+#### Orquestração com LangGraph
+
+Os quatro agentes não se chamam diretamente: quem decide a ordem de execução e repassa os dados é um **orquestrador** ([`orchestrator.py`](agririsk_v2_pastis/orchestrator.py)), construído com [LangGraph](https://github.com/langchain-ai/langgraph). O LangGraph descreve o fluxo como um **grafo de estados**:
+
+- **Estado compartilhado:** um único dicionário tipado por parcela (`State`) com as entradas (recorte, id da parcela, área declarada) e o espaço para a saída de cada agente (`agent01_output` … `agent04_output`), além da lista de erros e do tempo gasto em cada etapa.
+- **Nós:** cada agente é um nó, uma função que lê o estado e devolve só os campos que produz.
+- **Arestas:** definem a ordem de execução:
+
+```python
+g = StateGraph(State)
+g.add_edge(START, "agent01")                   # 01 e 02 partem juntos do início:
+g.add_edge(START, "agent02")                   # rodam em paralelo, sobre a mesma parcela
+g.add_edge(["agent01", "agent02"], "agent03")  # 03 espera os dois (nó de sincronização)
+g.add_edge("agent03", "agent04")
+g.add_edge("agent04", END)
+```
+
+O mesmo orquestrador também roda em lote. Os Agents 01-03 rodam na VM de avaliação e gravam as evidências de cada parcela (`--export-payloads`). Depois, o Agent 04 roda sobre essas evidências (`--from-payloads`), sem repetir a parte de visão.
 
 ### Estrutura do repositório
 
@@ -97,9 +116,7 @@ flowchart LR
 
 Nenhum número reportado foi usado para escolher hiperparâmetros ou limiares. As fraudes do teste ponta a ponta são simuladas sobre parcelas do fold 5: outra cultura declarada como trigo e polígono ampliado em +30%.
 
-### Agentes e aderência ao curso
-
-Os módulos citados são os da [página do curso](https://ica.ele.puc-rio.br/cursos/computer-vision-master/): (1) fundamentos e programação em Python, (2) aprimoramento de qualidade de imagens, (3) classificação e detecção avançadas, (4) síntese de imagens e modelos generativos.
+### Agentes
 
 #### Agent 01 · segmentação espaço-temporal de culturas (U-TAE-lite)
 
@@ -130,11 +147,6 @@ flowchart LR
 ![Confirmação antecipada: porcentagem de trigos confirmados e precisão por data](agririsk_v2_pastis/docs/figures/03_agent01_confirmacao_antecipada.png)
 
 *Cada ponto usa só as imagens disponíveis até aquela data. O limiar de cada data foi escolhido na validação para 95% de precisão e nunca sobe ao longo da safra.*
-
-- **Aderência ao curso:**
-    - **Módulo 3:** classificação de imagens com deep learning e CNNs; análise de conteúdo semântico na forma de segmentação semântica densa; avaliação com IoU, mIoU, F1 e AUC.
-    - **Módulos 1 e 2:** manipulação de imagens multiespectrais, máscara de nuvens, composição temporal mediana, interpolação e normalização; índice espectral NDVI.
-    - **Além do programa:** atenção temporal (o mecanismo dos transformers) aplicada a uma sequência de imagens, e interpretabilidade pela análise dos pesos de atenção.
 
 #### Agent 02 · delimitação de talhões e auditoria de área (U-Net multitarefa)
 
@@ -167,10 +179,6 @@ flowchart LR
 
 ![Auditoria de área: parcela honesta e parcela com área declarada inflada](agririsk_v2_pastis/docs/figures/05_agent02_delimitacao_auditoria.png)
 
-- **Aderência ao curso:**
-    - **Módulo 3:** CNN para segmentação; transfer learning; detecção e delimitação de objetos (talhões) e métrica de objetos (IoU de instância).
-    - **Módulos 1 e 2:** morfologia matemática (erosão, abertura), componentes conexos, transformada de distância, watershed e índice de vegetação a partir de RGB (VARI) para manchas de baixo vigor; georreferenciamento por transformação afim entre sistemas de coordenadas (Lambert-93 → pixel) para rasterizar os polígonos.
-
 **Treino dos dois modelos de visão** (métricas na validação, fold 4):
 
 ![Curvas de treino dos Agents 01 e 02](agririsk_v2_pastis/docs/figures/04_curvas_de_treino.png)
@@ -188,8 +196,6 @@ flowchart LR
 
 ![Benchmark regional: uma parcela de trigo de vigor baixo comparada aos trigos da mesma região](agririsk_v2_pastis/docs/figures/06_agent03_benchmark_regional.png)
 
-- **Aderência ao curso:** etapa de **integração**, em que as saídas dos modelos de visão viram decisão. Usa processamento de sinais derivados de imagem (suavização por mediana móvel da série de NDVI e métricas fenológicas por meia-amplitude), mas não é, em si, um modelo de visão computacional.
-
 #### Agent 04 · parecer com LLM
 
 - **O que faz:** gera o parecer em linguagem natural a partir das evidências dos Agents 01-03:
@@ -206,10 +212,6 @@ flowchart LR
     V -->|reprovado| RT["devolve os problemas ao modelo<br/>(1 nova tentativa)"]
     RT --> LLM
 ```
-
-- **Aderência ao curso:** **camada de aplicação**, fora do escopo de visão computacional. Mostra como comunicar a saída dos modelos de forma rastreável a um usuário não técnico.
-
-> **Módulo 4 (síntese de imagens e modelos generativos)** não é coberto. Uma extensão natural seria a super-resolução da série Sentinel-2 guiada pela imagem SPOT.
 
 ### Exemplos ponta a ponta
 
@@ -269,4 +271,3 @@ Matrícula: 242.100.131
 Pontifícia Universidade Católica do Rio de Janeiro
 
 Curso de Pós-Graduação *Visão Computacional Master* (VC Master)
-◊
